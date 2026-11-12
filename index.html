@@ -158,6 +158,9 @@ tr.total input{font-size:18px;font-weight:700}
 .controles svg{width:14px;height:14px;margin-top:3px;color:var(--verde)}
 .controles .mal{color:var(--rojo);font-weight:600}
 .controles .mal svg{color:var(--rojo)}
+.texto-leido{margin-top:14px;font-size:13px}
+.texto-leido summary{cursor:pointer;color:var(--azul);font-weight:600}
+.texto-leido pre{margin-top:8px;max-height:200px;overflow:auto;background:var(--sup-2);border:1px solid var(--linea);border-radius:6px;padding:10px;font-size:12px;white-space:pre-wrap}
 .acciones{display:flex;gap:10px;justify-content:flex-end;margin-top:auto;padding-top:18px}
 svg.hilos{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:5}
 svg.hilos path{fill:none;stroke:var(--azul);stroke-width:1.2;opacity:.55}
@@ -359,6 +362,7 @@ tr.nuevo td{animation:nuevo 2.6s ease}
 <aside class="detalle" id="detalle" aria-hidden="true"></aside>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 /* ===== utilidades ===== */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -379,6 +383,7 @@ const ALERT='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-w
 const TIPOS={
   'Factura A':{c:'#2B4C9B',sig:'A'},
   'Factura B':{c:'#6A55A0',sig:'B'},
+  'Factura C':{c:'#5C6B7A',sig:'C'},
   'Liquidación de granos':{c:'#2B6A50',sig:'LPG'},
   'Nota de crédito':{c:'#9A6410',sig:'NC'},
 };
@@ -387,25 +392,25 @@ const total=d=>d.neto+d.iva+d.otros;
 
 /* ===== datos simulados ===== */
 let docs=[
- {id:1,tipo:'Factura A',nro:'0003-00012874',emisor:'Agroinsumos del Oeste SRL',cuit:'30-70988451-6',fecha:dia(-12),vence:dia(3),concepto:'Glifosato 66,2% 200 L y fertilizante MAP',neto:2850000,iva:598500,otros:85500,dir:'pagar',estado:'pend'},
- {id:2,tipo:'Liquidación de granos',nro:'LPG 3302-55418790',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-1',fecha:dia(-6),vence:dia(2),concepto:'Soja, 64.320 kg a $412.000/tn',neto:24860300,iva:2782570,otros:-1328900,dir:'cobrar',estado:'pend'},
- {id:3,tipo:'Factura A',nro:'0001-00004521',emisor:'Transportes Ruta 5 SRL',cuit:'30-71122480-9',fecha:dia(-20),vence:dia(-2),concepto:'Flete de cereal, 3 viajes a puerto',neto:1420000,iva:298200,otros:0,dir:'pagar',estado:'pend'},
- {id:4,tipo:'Factura B',nro:'0005-00031077',emisor:'Ferretería Rural El Molino',cuit:'20-25874123-4',fecha:dia(-9),vence:dia(6),concepto:'Alambre, varillas y tranqueras',neto:487000,iva:0,otros:0,dir:'pagar',estado:'pend'},
- {id:5,tipo:'Liquidación de granos',nro:'LPG 3302-55402211',emisor:'Cooperativa Agrícola Unión del Sur',cuit:'30-50012478-3',fecha:dia(-28),vence:dia(-21),concepto:'Maíz, 120.500 kg a $198.000/tn',neto:22680400,iva:2505240,otros:-1190600,dir:'cobrar',estado:'ok'},
- {id:6,tipo:'Factura A',nro:'0002-00009963',emisor:'Servicios Agrícolas Pérez',cuit:'20-18456321-7',fecha:dia(-4),vence:dia(11),concepto:'Cosecha de soja, 180 ha',neto:5400000,iva:567000,otros:0,dir:'pagar',estado:'pend'},
- {id:7,tipo:'Nota de crédito',nro:'0003-00000412',emisor:'Agroinsumos del Oeste SRL',cuit:'30-70988451-6',fecha:dia(-3),vence:dia(3),concepto:'Bonificación por pago contado',neto:-142500,iva:-29925,otros:0,dir:'pagar',estado:'pend'},
- {id:8,tipo:'Factura A',nro:'0004-00017740',emisor:'Combustibles La Pampa SA',cuit:'30-69874512-0',fecha:dia(-15),vence:dia(-8),concepto:'Gasoil grado 2, 4.000 L',neto:3960000,iva:831600,otros:198000,dir:'pagar',estado:'ok'},
- {id:9,tipo:'Liquidación de granos',nro:'LPG 3302-55425560',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-1',fecha:dia(-1),vence:dia(9),concepto:'Soja, 41.800 kg a $409.500/tn',neto:16050200,iva:1797620,otros:-860400,dir:'cobrar',estado:'pend'},
+ {id:1,tipo:'Factura A',nro:'0003-00012874',emisor:'Agroinsumos del Oeste SRL',cuit:'30-70988451-0',fecha:dia(-12),vence:dia(3),concepto:'Glifosato 66,2% 200 L y fertilizante MAP',neto:2850000,iva:598500,otros:85500,dir:'pagar',estado:'pend'},
+ {id:2,tipo:'Liquidación de granos',nro:'LPG 3302-55418790',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(-6),vence:dia(2),concepto:'Soja, 64.320 kg a $412.000/tn',neto:24860300,iva:2782570,otros:-1328900,dir:'cobrar',estado:'pend'},
+ {id:3,tipo:'Factura A',nro:'0001-00004521',emisor:'Transportes Ruta 5 SRL',cuit:'30-71122480-3',fecha:dia(-20),vence:dia(-2),concepto:'Flete de cereal, 3 viajes a puerto',neto:1420000,iva:298200,otros:0,dir:'pagar',estado:'pend'},
+ {id:4,tipo:'Factura B',nro:'0005-00031077',emisor:'Ferretería Rural El Molino',cuit:'20-25874123-5',fecha:dia(-9),vence:dia(6),concepto:'Alambre, varillas y tranqueras',neto:487000,iva:0,otros:0,dir:'pagar',estado:'pend'},
+ {id:5,tipo:'Liquidación de granos',nro:'LPG 3302-55402211',emisor:'Cooperativa Agrícola Unión del Sur',cuit:'30-50012478-0',fecha:dia(-28),vence:dia(-21),concepto:'Maíz, 120.500 kg a $198.000/tn',neto:22680400,iva:2505240,otros:-1190600,dir:'cobrar',estado:'ok'},
+ {id:6,tipo:'Factura A',nro:'0002-00009963',emisor:'Servicios Agrícolas Pérez',cuit:'20-18456321-6',fecha:dia(-4),vence:dia(11),concepto:'Cosecha de soja, 180 ha',neto:5400000,iva:567000,otros:0,dir:'pagar',estado:'pend'},
+ {id:7,tipo:'Nota de crédito',nro:'0003-00000412',emisor:'Agroinsumos del Oeste SRL',cuit:'30-70988451-0',fecha:dia(-3),vence:dia(3),concepto:'Bonificación por pago contado',neto:-142500,iva:-29925,otros:0,dir:'pagar',estado:'pend'},
+ {id:8,tipo:'Factura A',nro:'0004-00017740',emisor:'Combustibles La Pampa SA',cuit:'30-69874512-2',fecha:dia(-15),vence:dia(-8),concepto:'Gasoil grado 2, 4.000 L',neto:3960000,iva:831600,otros:198000,dir:'pagar',estado:'ok'},
+ {id:9,tipo:'Liquidación de granos',nro:'LPG 3302-55425560',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(-1),vence:dia(9),concepto:'Soja, 41.800 kg a $409.500/tn',neto:16050200,iva:1797620,otros:-860400,dir:'cobrar',estado:'pend'},
 ];
 
 const EJEMPLOS=[
- {k:'fa',titulo:'Factura A, semillas',nota:'Foto tomada con el celular',d:{tipo:'Factura A',nro:'0002-00018455',emisor:'Semillera San Andrés SA',cuit:'30-71589632-4',fecha:dia(-1),vence:dia(14),concepto:'Semilla de trigo, 120 bolsas',neto:6240000,iva:655200,otros:187200,ivaL:'IVA 10,5%',otrosL:'Percepción IIBB'},
+ {k:'fa',titulo:'Factura A, semillas',nota:'Foto tomada con el celular',d:{tipo:'Factura A',nro:'0002-00018455',emisor:'Semillera San Andrés SA',cuit:'30-71589632-6',fecha:dia(-1),vence:dia(14),concepto:'Semilla de trigo, 120 bolsas',neto:6240000,iva:655200,otros:187200,ivaL:'IVA 10,5%',otrosL:'Percepción IIBB'},
    cf:{tipo:99,nro:98,emisor:97,cuit:99,fecha:96,vence:94,concepto:95,neto:98,iva:97,otros:96}},
- {k:'lg',titulo:'Liquidación de granos, trigo',nota:'Formulario 1116 B del acopio',d:{tipo:'Liquidación de granos',nro:'LPG 3302-55431002',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-1',fecha:dia(0),vence:dia(5),concepto:'Trigo, 85.200 kg a $221.500/tn',neto:18048900,iva:1895135,otros:-958300,ivaL:'IVA 10,5%',otrosL:'Retenciones',kg:85200,precio:221500,gastos:822900,grano:'Trigo'},
+ {k:'lg',titulo:'Liquidación de granos, trigo',nota:'Formulario 1116 B del acopio',d:{tipo:'Liquidación de granos',nro:'LPG 3302-55431002',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(0),vence:dia(5),concepto:'Trigo, 85.200 kg a $221.500/tn',neto:18048900,iva:1895135,otros:-958300,ivaL:'IVA 10,5%',otrosL:'Retenciones',kg:85200,precio:221500,gastos:822900,grano:'Trigo'},
    cf:{tipo:99,nro:97,emisor:98,cuit:99,fecha:97,vence:95,concepto:93,neto:96,iva:95,otros:94}},
- {k:'fb',titulo:'Factura B, veterinaria',nota:'Ticket con poca luz',d:{tipo:'Factura B',nro:'0007-00002210',emisor:'Veterinaria El Ombú',cuit:'20-29874563-1',fecha:dia(-2),vence:dia(8),concepto:'Vacuna antiaftosa, 250 dosis',neto:612500,iva:0,otros:0,ivaL:'IVA',otrosL:'Otros tributos'},
+ {k:'fb',titulo:'Factura B, veterinaria',nota:'Ticket con poca luz',d:{tipo:'Factura B',nro:'0007-00002210',emisor:'Veterinaria El Ombú',cuit:'20-29874563-2',fecha:dia(-2),vence:dia(8),concepto:'Vacuna antiaftosa, 250 dosis',neto:612500,iva:0,otros:0,ivaL:'IVA',otrosL:'Otros tributos'},
    cf:{tipo:96,nro:88,emisor:91,cuit:97,fecha:79,vence:82,concepto:86,neto:93,iva:99,otros:99}},
- {k:'nc',titulo:'Nota de crédito',nota:'Devolución de mercadería',d:{tipo:'Nota de crédito',nro:'0004-00000877',emisor:'Combustibles La Pampa SA',cuit:'30-69874512-0',fecha:dia(-1),vence:dia(7),concepto:'Devolución de lubricante, 2 tambores',neto:-380000,iva:-79800,otros:0,ivaL:'IVA 21%',otrosL:'Otros tributos'},
+ {k:'nc',titulo:'Nota de crédito',nota:'Devolución de mercadería',d:{tipo:'Nota de crédito',nro:'0004-00000877',emisor:'Combustibles La Pampa SA',cuit:'30-69874512-2',fecha:dia(-1),vence:dia(7),concepto:'Devolución de lubricante, 2 tambores',neto:-380000,iva:-79800,otros:0,ivaL:'IVA 21%',otrosL:'Otros tributos'},
    cf:{tipo:98,nro:97,emisor:96,cuit:98,fecha:95,vence:92,concepto:94,neto:98,iva:97,otros:99}},
 ];
 
@@ -433,7 +438,7 @@ function inicio(){
   $('#panel').innerHTML=`<div class="caja-cab"><h2>Nuevo comprobante</h2></div><div class="cuerpo">
     <div class="zona" id="zona">
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
-      <h3>Arrastrá la imagen o sacá una foto</h3><p>Facturas A y B, notas de crédito y liquidaciones de granos</p>
+      <h3>Arrastrá la imagen o sacá una foto</h3><p>La foto se lee de verdad, en tu navegador. Funciona mejor de frente, con buena luz y el comprobante entero.</p>
       <div class="bts">
         <label class="btn btn-pri" tabindex="0">Sacar foto<input type="file" accept="image/*" capture="environment" hidden id="cam"></label>
         <label class="btn btn-sec" tabindex="0">Seleccionar archivo<input type="file" accept="image/*,.pdf" hidden id="arch"></label>
@@ -454,9 +459,131 @@ function inicio(){
   $$('.zona label').forEach(l=>l.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();l.querySelector('input').click()}});
 }
 function archivo(f){
-  const e=EJEMPLOS[Math.floor(Math.random()*EJEMPLOS.length)];
-  if(f.type.startsWith('image/')){const r=new FileReader();r.onload=()=>leer(e,r.result,f.name);r.readAsDataURL(f)}
-  else leer(e,null,f.name);
+  if(!f.type.startsWith('image/')){toast('Para leer el comprobante subí una foto o captura en JPG o PNG');return}
+  const r=new FileReader();r.onload=()=>leerFoto(r.result,f.name);r.readAsDataURL(f);
+}
+
+/* ===== lectura REAL de una foto (OCR en el navegador) ===== */
+const PASOS_FOTO=[['Preparando imagen','Tamaño y contraste'],['Cargando motor de lectura','Solo la primera vez tarda más'],['Leyendo el texto','OCR en español'],['Interpretando campos','CUIT, fechas, importes e impuestos'],['Validando','CUIT, totales y duplicados']];
+function achicar(src,max=2000){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.filter='grayscale(1) contrast(1.25)';x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/png'))};im.onerror=()=>res(src);im.src=src})}
+function marcarPaso(i,est){const p=$('#p'+i);if(!p)return;p.classList.remove('va','ok');if(est)p.classList.add(est)}
+
+async function leerFoto(img,nombre){
+  if(ocupado) return; ocupado=true;
+  $('#hilos').innerHTML='';
+  $('#lienzo').innerHTML=`<div class="doc-wrap leyendo" id="doc"><img src="${img}" alt="Comprobante cargado"><div class="escaner"></div></div>`;
+  $('#pieVisor').innerHTML=`<span>${nombre}</span><span id="estadoVisor">Leyendo la foto…</span>`;
+  $('#panel').innerHTML=`<div class="caja-cab"><h2>Leyendo tu comprobante</h2><span class="chico" id="pct">0%</span></div><div class="cuerpo"><div class="pasos">${PASOS_FOTO.map((p,i)=>`<div class="paso" id="p${i}"><span class="p"></span><span>${p[0]}</span><small>${p[1]}</small></div>`).join('')}</div></div>`;
+  const pct=n=>{const e=$('#pct');if(e)e.textContent=Math.round(n)+'%'};
+  try{
+    if(!window.Tesseract) throw new Error('sin-motor');
+    marcarPaso(0,'va'); const chica=await achicar(img); marcarPaso(0,'ok'); pct(8);
+    marcarPaso(1,'va');
+    const res=await Tesseract.recognize(chica,'spa',{logger:m=>{
+      if(m.status==='recognizing text'){marcarPaso(1,'ok');marcarPaso(2,'va');pct(20+m.progress*65)}
+      else pct(8+(m.progress||0)*12);
+    }});
+    marcarPaso(1,'ok');marcarPaso(2,'ok');
+    marcarPaso(3,'va'); const {d,cf}=interpretar(res.data.text||'',res.data.confidence||60); await espera(250); marcarPaso(3,'ok'); pct(95);
+    marcarPaso(4,'va'); await espera(250); marcarPaso(4,'ok'); pct(100);
+    $('#doc').classList.remove('leyendo');
+    formulario({cf,real:true,texto:res.data.text||''},d,img);
+    await completar(img);
+  }catch(err){
+    $('#doc').classList.remove('leyendo');
+    $('#panel').innerHTML=`<div class="caja-cab"><h2>No se pudo leer la foto</h2></div><div class="cuerpo"><p style="margin-bottom:14px">${err.message==='sin-motor'?'El motor de lectura no cargó. Revisá la conexión a internet y volvé a intentar.':'Hubo un problema al procesar la imagen. Probá con una foto más nítida, de frente y con buena luz.'}</p><div class="acciones" style="justify-content:flex-start;margin-top:0"><button class="btn btn-pri" id="reint">Cargar otra foto</button></div></div>`;
+    $('#reint').onclick=inicio;
+  }
+  ocupado=false;
+}
+
+/* --- reglas de interpretación para comprobantes argentinos --- */
+const sinAcento=t=>t.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function numeroAR(t){t=t.replace(/[\s$]/g,'');const neg=/^-/.test(t);t=t.replace(/^-/,'');
+  if(/,\d{2}$/.test(t)) t=t.replace(/\./g,'').replace(',','.'); else if(/\.\d{2}$/.test(t)) t=t.replace(/,/g,''); else t=t.replace(/[.,]/g,'');
+  const n=parseFloat(t);return isNaN(n)?null:(neg?-n:n)}
+function montos(linea){return [...linea.matchAll(/-?\$?\s?\d{1,3}(?:[.,\s]\d{3})*[.,]\d{2}(?!\d)/g)].map(m=>numeroAR(m[0])).filter(n=>n!==null)}
+function cuitValido(c){const d=(c||'').replace(/\D/g,'');if(d.length!==11)return false;const w=[5,4,3,2,7,6,5,4,3,2];let s=0;for(let i=0;i<10;i++)s+=+d[i]*w[i];let v=11-s%11;if(v===11)v=0;if(v===10)v=9;return v===+d[10]}
+function fechasDe(linea){const out=[];for(const m of linea.matchAll(/(?<!\d)(\d{1,2})\s?[\/\-.]\s?(\d{1,2})\s?[\/\-.]\s?(\d{2,4})(?!\d)/g)){let[_,dd,mm,yy]=m;dd=+dd;mm=+mm;yy=+yy;if(yy<100)yy+=2000;if(dd>=1&&dd<=31&&mm>=1&&mm<=12&&yy>=2000&&yy<=2100)out.push(`${yy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`)}return out}
+
+function interpretar(texto,confOCR){
+  const lineas=texto.split(/\n/).map(l=>l.trim()).filter(Boolean);
+  const T=sinAcento(texto).toUpperCase();
+  const base=Math.max(55,Math.min(95,Math.round(confOCR)));
+  const cf={}, ok=k=>cf[k]=Math.max(90,Math.min(98,base+8)), dudo=k=>cf[k]=Math.min(72,base-15);
+  const d={};
+
+  // tipo de documento
+  const cod=T.match(/COD(?:IGO)?\.?\s*(?:N[°ºO.]?\s*)?0?(\d{1,3})\b/);
+  if(/1116|\bLPG\b|\bCOE\b|NETO A COBRAR|LIQUIDACION PRIMARIA/.test(T)||(/LIQUIDACION/.test(T)&&/GRANO|ACOPIO/.test(T))){d.tipo='Liquidación de granos';ok('tipo')}
+  else if(/NOTA DE CREDITO/.test(T)||(cod&&['3','8','13'].includes(cod[1]))){d.tipo='Nota de crédito';ok('tipo')}
+  else if(cod&&['1','6','11'].includes(cod[1])){d.tipo={'1':'Factura A','6':'Factura B','11':'Factura C'}[cod[1]];ok('tipo')}
+  else{const l=texto.match(/^\s*([ABC])\s*$/m)||T.match(/FACTURA\s+([ABC])\b/);
+    if(l){d.tipo='Factura '+l[1];ok('tipo')}else if(/MONOTRIBUT/.test(T)){d.tipo='Factura C';dudo('tipo')}else if(/IVA INCLUIDO|CONSUMIDOR FINAL/.test(T)){d.tipo='Factura B';dudo('tipo')}else{d.tipo='Factura A';dudo('tipo')}}
+  const LG=d.tipo==='Liquidación de granos';
+  d.ivaL='IVA'; d.otrosL=LG?'Retenciones':'Percepciones y otros';
+
+  // CUIT del emisor (el primero válido que aparece)
+  const cuits=[...texto.matchAll(/\b(2[0347]|3[034])\s?[-.]?\s?(\d{8})\s?[-.]?\s?(\d)\b/g)].map(m=>`${m[1]}-${m[2]}-${m[3]}`);
+  const propios=['30-71458963-2']; const cv=cuits.find(c=>cuitValido(c)&&!propios.includes(c)); d.cuit=cv||cuits.find(c=>!propios.includes(c))||''; d.cuit&&cuitValido(d.cuit)?ok('cuit'):dudo('cuit');
+
+  // emisor
+  const prohib=/^(FACTURA|ORIGINAL|DUPLICADO|TRIPLICADO|COD|CUIT|FECHA|IVA|INGRESOS|INICIO|DOMICILIO|PUNTO|COMP|RAZON|CONDICION|TEL|NOTA)/;
+  let em=null;
+  for(const l of lineas.slice(0,14)){const u=sinAcento(l).toUpperCase();
+    const rs=l.match(/raz[oó]n social\s*:?\s*(.+)/i); if(rs&&rs[1].length>2){em=rs[1];break}
+    if(/\b(S\.?\s?A\.?|S\.?\s?R\.?\s?L\.?|S\.?\s?A\.?\s?S\.?|COOP[A-Z.]*|SOCIEDAD)(\s|$)/.test(u)&&!prohib.test(u)){em=l;break}}
+  if(!em) em=lineas.slice(0,8).find(l=>{const u=sinAcento(l).toUpperCase();return /[A-Z]{3,}.*[A-Z]{3,}/.test(u)&&!prohib.test(u)&&!/\d{2}[\/-]\d{2}/.test(u)});
+  d.emisor=(em||'').replace(/\s+(FACTURA|NOTA DE|LIQUIDACI|CUIT)\b.*$/i,'').replace(/^[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]+|[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9.)]+$/g,'').replace(/\s+[a-z]{1,7}$/,m=>/S\.?A|SRL/i.test(em)?'':m).replace(/\s{2,}/g,' ').trim(); em&&/S\.?\s?A|S\.?\s?R\.?\s?L|COOP|SOCIEDAD|raz/i.test(em)?ok('emisor'):dudo('emisor');
+
+  // número de comprobante
+  let nro=texto.match(/\b(\d{4,5})\s*[-–]\s*(\d{8})\b/);
+  if(nro){d.nro=`${nro[1].padStart(4,'0').slice(-5)}-${nro[2]}`;ok('nro')}
+  else{const pv=texto.match(/punto de venta\s*:?\s*(\d{1,5})[\s\S]{0,40}?n[°ºr]?o?\.?\s*:?\s*(\d{1,8})/i);
+    const coe=texto.match(/(?:COE|LPG)\s*(?:N[°º])?\s*:?\s*([\d\- ]{8,})/i);
+    if(pv){d.nro=`${pv[1].padStart(4,'0')}-${pv[2].padStart(8,'0')}`;ok('nro')}
+    else if(coe){d.nro=(LG?'LPG ':'')+coe[1].trim();ok('nro')}
+    else{d.nro='';dudo('nro')}}
+
+  // fechas
+  let fEmi=null,fVto=null;
+  for(const l of lineas){const fs=fechasDe(l);if(!fs.length)continue;const u=sinAcento(l).toUpperCase();
+    if(/CAE|INICIO|ACTIVIDAD/.test(u)&&!/PAGO/.test(u)) continue;
+    if(/VTO|VT0|VIO|VENC|PAGO/.test(u)){if(!fVto)fVto=fs[fs.length-1]}else if(!fEmi)fEmi=fs[0]}
+  const todas=lineas.flatMap(fechasDe);
+  if(!fEmi&&todas.length)fEmi=todas[0];
+  d.fecha=fEmi||dia(0); fEmi?ok('fecha'):dudo('fecha');
+  if(fVto){d.vence=fVto;ok('vence')}else{const x=new Date(d.fecha+'T00:00:00');x.setDate(x.getDate()+30);d.vence=x.toISOString().slice(0,10);dudo('vence')}
+
+  // importes
+  const conMonto=lineas.map(l=>({u:sinAcento(l).toUpperCase(),m:montos(l)})).filter(x=>x.m.length);
+  const todos=conMonto.flatMap(x=>x.m);
+  const ult=x=>x.m[x.m.length-1];
+  const lt=conMonto.filter(x=>(/\bTOTAL\b|NETO A COBRAR|A COBRAR|A PAGAR/.test(x.u))&&!/SUB\s?TOTAL/.test(x.u)&&!/IVA/.test(x.u));
+  let tot=lt.length?ult(lt[lt.length-1]):(todos.length?Math.max(...todos):null);
+  lt.length?ok('total'):(tot!=null?dudo('total'):0);
+  const liva=conMonto.filter(x=>/(^|[^A-Z])[I¡L1|]\s?\.?V\.?A\b/.test(x.u)&&!/\bTOTAL\b/.test(x.u)&&!/RET/.test(x.u));
+  let iva=liva.length?liva.map(ult).filter(v=>tot==null||Math.abs(v)<Math.abs(tot)).reduce((a,b)=>a+b,0):0;
+  const lotr=conMonto.filter(x=>/PERCEP|RETEN|IIBB|INGRESOS BRUTOS|IMP\.? INT|OTROS TRIB|GANANCIAS/.test(x.u)&&!/\bTOTAL\b/.test(x.u));
+  let otros=lotr.map(ult).reduce((a,b)=>a+Math.abs(b),0); if(LG) otros=-otros;
+  const lnet=conMonto.filter(x=>/NETO GRAV|IMPORTE NETO|SUB\s?TOTAL|IMPORTE BRUTO|\bNETO\b/.test(x.u)&&!/A COBRAR|A PAGAR/.test(x.u));
+  const pri=[/IMPORTE BRUTO/,/NETO GRAV|IMPORTE NETO/,/\bNETO\b/,/SUB\s?TOTAL/]; let neto=null; for(const re of pri){const f=lnet.find(x=>re.test(x.u)); if(f){neto=ult(f);break}}
+  if(/Factura [BC]/.test(d.tipo)&&!liva.length) iva=0;
+  liva.length||/Factura [BC]/.test(d.tipo)?ok('iva'):dudo('iva');
+  lotr.length?ok('otros'):cf.otros=Math.max(90,base);
+  if(neto==null&&tot!=null){neto=+(tot-iva-otros).toFixed(2);dudo('neto')}else if(neto!=null)ok('neto');else{neto=0;dudo('neto')}
+  if(tot!=null&&!liva.length&&!/Factura [BC]/.test(d.tipo)&&Math.abs(neto+otros-tot)>1){const r=+(tot-neto-otros).toFixed(2);if(r>0&&r<tot*0.3){iva=r;dudo('iva')}}
+  d.neto=neto||0;d.iva=+iva.toFixed(2);d.otros=+otros.toFixed(2);d.totalLeido=tot;
+
+  // concepto
+  let conc='';
+  if(LG){const g=T.match(/\b(SOJA|MAIZ|TRIGO|GIRASOL|SORGO|CEBADA)\b/);const kg=texto.match(/(\d{1,3}(?:\.\d{3})+|\d{4,})\s*kg/i);
+    conc=[g?g[1][0]+g[1].slice(1).toLowerCase():'',kg?kg[1]+' kg':''].filter(Boolean).join(', ')}
+  else{const i=lineas.findIndex(l=>/descripci[oó]n|producto|detalle|concepto/i.test(l));
+    const cand=(i>=0?lineas.slice(i+1,i+4):[]).find(l=>/[a-záéíóúñ]{4,}/i.test(l)&&!prohib.test(sinAcento(l).toUpperCase())&&!/total|subtotal|iva|cuit|fecha|importe|neto|percep|reten|servicio\s*$|cantidad|precio/i.test(l));
+    conc=(cand||'').replace(/^\d+\s+/,'').replace(/-?\$?\s?\d{1,3}(?:[.,]\d{3})*[.,]\d{2}/g,'').replace(/\s{2,}/g,' ').trim()}
+  d.concepto=conc; conc?(cf.concepto=Math.max(90,Math.min(94,base+4))):dudo('concepto');
+  return {d,cf};
 }
 
 const m=(k,v)=>`<span class="mk" data-k="${k}">${v}</span>`;
@@ -510,26 +637,28 @@ async function leer(ej,img,nombre){
 
 function formulario(ej,d,img){
   const LG=d.tipo==='Liquidación de granos';
-  const et={neto:LG?'Importe bruto':'Neto gravado',iva:d.ivaL,otros:LG?'Retenciones':d.otrosL,vence:LG?'Fecha de pago':'Vencimiento'};
+  const et={neto:LG?'Importe bruto':'Neto gravado',iva:d.ivaL||'IVA',otros:LG?'Retenciones':(d.otrosL||'Percepciones'),vence:LG?'Fecha de pago':'Vencimiento'};
+  const cuitOk=cuitValido(d.cuit), sumaOk=d.totalLeido==null||Math.abs(total(d)-d.totalLeido)<1;
   const val={tipo:d.tipo,emisor:d.emisor,cuit:d.cuit,nro:d.nro,fecha:d.fecha,concepto:d.concepto,neto:d.neto,iva:d.iva,otros:d.otros,vence:d.vence,total:plata2(total(d))};
   const vals=Object.values(ej.cf), prom=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length), dud=vals.filter(v=>v<90).length;
-  const dup=docs.some(x=>x.nro===d.nro);
-  $('#estadoVisor').textContent=`${CAMPOS.length} campos detectados`;
+  const dup=!!d.nro&&docs.some(x=>x.nro===d.nro);
+  $('#estadoVisor').textContent=ej.real?`${Object.entries(ej.cf).filter(([k,v])=>k!=='total'&&v>=90).length} de ${CAMPOS.length-1} campos leídos con confianza`:`${CAMPOS.length} campos detectados`;
   $('#panel').innerHTML=`<div class="caja-cab"><h2>Datos extraídos</h2>${tipoHTML(d.tipo)}</div><div class="cuerpo">
-    <div class="resumen-lectura"><div><b>${d.emisor}</b><span class="chico">${dud?`${dud} campos con baja confianza. Revisalos antes de archivar.`:'Lectura completa. Podés editar cualquier campo.'}</span></div><div class="conf-glob"><span class="chico">Confianza</span><strong class="num">${prom}%</strong></div></div>
+    <div class="resumen-lectura"><div><b>${d.emisor||'Emisor no detectado'}</b><span class="chico">${dud?`${dud===1?'1 campo':dud+' campos'} con baja confianza. ${dud===1?'Revisalo':'Revisalos'} antes de archivar.`:'Lectura completa. Podés editar cualquier campo.'}</span></div><div class="conf-glob"><span class="chico">Confianza</span><strong class="num">${prom}%</strong></div></div>
     <table class="campos">${CAMPOS.map(([k,l])=>{
       const c=ej.cf[k], lab=et[k]||l, tp=(k==='fecha'||k==='vence')?'date':(['neto','iva','otros'].includes(k)?'number':'text');
       const f=k==='tipo'?`<select id="f-tipo">${Object.keys(TIPOS).map(t=>`<option ${t===d.tipo?'selected':''}>${t}</option>`).join('')}</select>`
         :k==='total'?`<input id="f-total" class="num" value="${val.total}" readonly aria-label="Total">`
-        :`<input id="f-${k}" class="${tp==='number'?'num':''}" type="${tp}" value="${val[k]}" aria-label="${lab}">`;
+        :`<input id="f-${k}" class="${tp==='number'?'num':''}" type="${tp}" value="${String(val[k]??'').replace(/[&"<]/g,c=>({'&':'&amp;','"':'&quot;','<':'&lt;'}[c]))}" aria-label="${lab}">`;
       return `<tr data-k="${k}" class="${c&&c<90?'dudoso':''} ${k==='total'?'total':''}"><td class="lab">${lab}</td><td>${f}</td><td class="cf">${c?`<span class="meter" title="Confianza de lectura"><i style="--v:${c}%"></i>${c}%</span>`:''}</td></tr>`}).join('')}
     </table>
     <div class="controles">
-      <p>${CHECK}<span>CUIT ${d.cuit} válido</span></p>
-      <p>${CHECK}<span>La suma de neto e impuestos coincide con el total</span></p>
-      ${LG?`<p>${CHECK}<span>Kilos por precio coincide con el importe liquidado</span></p>`:''}
+      <p class="${cuitOk?'':'mal'}">${cuitOk?CHECK:ALERT}<span>${cuitOk?`CUIT ${d.cuit} válido`:d.cuit?`El CUIT ${d.cuit} no es válido: revisalo`:'No se encontró el CUIT del emisor'}</span></p>
+      <p class="${sumaOk?'':'mal'}">${sumaOk?CHECK:ALERT}<span>${sumaOk?'La suma de neto e impuestos coincide con el total':`La suma no coincide con el total leído (${plata2(d.totalLeido)}): revisá los importes`}</span></p>
+      ${LG&&!ej.real?`<p>${CHECK}<span>Kilos por precio coincide con el importe liquidado</span></p>`:''}
       <p class="${dup?'mal':''}">${dup?ALERT:CHECK}<span>${dup?'Ya existe un comprobante con este número en Documentos':'Sin duplicados en Documentos'}</span></p>
     </div>
+    ${ej.real?`<details class="texto-leido"><summary>Ver el texto que se leyó de la foto</summary><pre>${ej.texto.replace(/[<&]/g,c=>({'<':'&lt;','&':'&amp;'}[c]))}</pre></details>`:''}
     <div class="acciones"><button class="btn btn-sec" id="descartar">Descartar</button><button class="btn btn-pri" id="archivar">Archivar comprobante</button></div></div>`;
   ['neto','iva','otros'].forEach(k=>$('#f-'+k).oninput=()=>{$('#f-total').value=plata2((+$('#f-neto').value||0)+(+$('#f-iva').value||0)+(+$('#f-otros').value||0))});
   $('#descartar').onclick=()=>{inicio();toast('Comprobante descartado')};
