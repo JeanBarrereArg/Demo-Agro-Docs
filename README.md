@@ -2,14 +2,14 @@
 
 Demo interactiva para empresas agropecuarias: carga de facturas y liquidaciones de granos por foto, identificación y clasificación del documento, extracción de importes, fechas, impuestos y vencimientos, y centralización de la documentación.
 
-Es un único archivo `index.html` (HTML, CSS y JavaScript). No necesita instalación ni servidor: se abre con doble clic en cualquier navegador. La lectura de comprobantes es real y corre en el navegador (pdf.js para PDF, Tesseract.js para OCR); los documentos precargados son datos simulados y nada se guarda al recargar la página.
+Es un único archivo `index.html` (HTML, CSS y JavaScript). No necesita instalación ni servidor: se abre con doble clic en cualquier navegador. La lectura de comprobantes es real y corre en el navegador (pdf.js para PDF, Tesseract.js para OCR); los documentos precargados son datos simulados. Lo que se archiva queda guardado en el navegador de cada usuario (no se envía a ningún servidor) y se puede volver al ejemplo con "Restablecer ejemplo" en Documentos.
 
 ## Secciones
 
 - **Cargar comprobante**: lectura real de fotos y PDF, de a uno o varios a la vez. Formatos: PDF (con texto o escaneado), JPG, PNG, HEIC, WEBP, BMP y GIF. Incluye 4 comprobantes de ejemplo para presentar.
-- **Documentos**: repositorio con búsqueda, filtros por tipo, ficha de detalle y exportación a CSV.
+- **Documentos**: repositorio con búsqueda, filtros por tipo, ficha de detalle (con rubros y conceptos en las liquidaciones) y exportación a CSV en formato argentino.
 - **Vencimientos**: línea de tiempo de pagos y cobros.
-- **Resumen**: cobros contra pagos a 15 días y clasificación de documentos.
+- **Resumen**: cobros contra pagos a 15 días, clasificación de documentos y deducciones y retenciones de liquidaciones por concepto.
 
 ## Publicar en Render
 

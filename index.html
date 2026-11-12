@@ -58,6 +58,7 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
 .btn-sec{background:var(--sup);border:1px solid var(--linea-2)}
 .btn-sec:hover{border-color:var(--gris-2);background:var(--sup-2)}
 .btn svg{width:16px;height:16px}
+.btn.peligro{border-color:var(--rojo);color:var(--rojo);background:var(--rojo-claro)}
 
 /* ---------- estados ---------- */
 .estado{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:3px 9px 3px 8px;border-radius:4px;white-space:nowrap}
@@ -172,10 +173,52 @@ tr.total input{font-size:18px;font-weight:700}
 .ll-txt b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ll-txt .chico{display:block;line-height:1.35;margin-top:2px}
 .ll-ir{font-size:13px;font-weight:600;color:var(--azul)}
+.ll .rep{color:var(--rojo);font-weight:600}
 .ll.archivado,.ll.descartado{opacity:.6}
 .ll.leyendo .ll-ic{animation:pulso 1s ease-in-out infinite alternate}
 @keyframes pulso{to{opacity:.4}}
 .acciones label.btn{cursor:pointer}
+.conceptos{margin-top:16px}
+.conceptos h3{font-size:14px;font-weight:700;margin-bottom:8px}
+.conceptos table{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--linea);border-radius:6px;overflow:hidden}
+.conceptos th{text-align:left;font-weight:600;color:var(--gris);background:var(--sup-2);padding:7px 10px;border-bottom:1px solid var(--linea)}
+.conceptos td{padding:7px 10px;border-bottom:1px solid var(--sup-2)}
+.conceptos th.der{text-align:right}
+.conceptos tfoot td{font-weight:700;border-top:1px solid var(--linea);border-bottom:none}
+.tabla-conc{width:100%;border-collapse:collapse;font-size:14px}
+.tabla-conc>thead th{text-align:left;font-size:12.5px;font-weight:600;color:var(--gris);padding:10px 18px;background:var(--sup-2);border-bottom:1px solid var(--linea)}
+.tabla-conc>tbody>tr.fc>td{padding:11px 18px;border-bottom:1px solid var(--linea);cursor:pointer}
+.tabla-conc>tbody>tr.fc:hover{background:#F6F8FB}
+.tabla-conc .barra-c{width:28%}
+.barra-c i{display:block;height:8px;border-radius:4px;min-width:2px}
+.tabla-conc .abre{display:inline-block;color:var(--gris);transition:transform .15s}
+.tabla-conc tr.abierta .abre{transform:rotate(90deg)}
+.det-c>td{background:var(--sup-2);padding:6px 18px 10px 36px;border-bottom:1px solid var(--linea)}
+.det-c table{width:100%;border-collapse:collapse;font-size:13px}
+.det-c table td{padding:6px 0;border-bottom:1px solid var(--linea);cursor:pointer}
+.det-c table td:last-child{padding-right:30px}
+.det-c table tr:last-child td{border-bottom:none}
+.tabla-conc th.der{text-align:right}
+.tabla-conc>tfoot td{padding:12px 18px;font-weight:700;border-top:2px solid var(--linea)}
+.rubros{margin-top:16px}
+.rubros-cab{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rubros-cab h3{font-size:14px;font-weight:700}
+.btn-link{color:var(--azul);font-weight:600;font-size:13px}
+.btn-link:hover{text-decoration:underline}
+.rubro{border:1px solid var(--linea);border-radius:6px;margin-bottom:6px;background:#fff}
+.rubro summary{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;cursor:pointer;font-weight:600;font-size:13.5px;list-style:none}
+.rubro summary::-webkit-details-marker{display:none}
+.rubro summary span:first-child::before{content:"›";display:inline-block;width:14px;color:var(--gris);transition:transform .15s}
+.rubro[open] summary span:first-child::before{transform:rotate(90deg)}
+.rubro[open] summary{border-bottom:1px solid var(--linea)}
+.rubro-dl{display:grid;grid-template-columns:minmax(120px,40%) 1fr;font-size:13px;padding:4px 12px 8px}
+.rubro-dl dt,.rubro-dl dd{padding:5px 0;border-bottom:1px solid var(--sup-2)}
+.rubro-dl dt{color:var(--gris)}
+.rubro-dl dd{font-weight:600;word-break:break-word}
+.rubro-tabla{overflow-x:auto;padding:6px 12px 10px}
+.rubro-tabla table{border-collapse:collapse;font-size:12.5px;width:100%}
+.rubro-tabla th{text-align:left;color:var(--gris);font-weight:600;padding:5px 8px;border-bottom:1px solid var(--linea);white-space:nowrap}
+.rubro-tabla td{padding:5px 8px;border-bottom:1px solid var(--sup-2);white-space:nowrap}
 .texto-leido{margin-top:14px;font-size:13px}
 .texto-leido summary{cursor:pointer;color:var(--azul);font-weight:600}
 .texto-leido pre{margin-top:8px;max-height:200px;overflow:auto;background:var(--sup-2);border:1px solid var(--linea);border-radius:6px;padding:10px;font-size:12px;white-space:pre-wrap}
@@ -292,6 +335,7 @@ tr.nuevo td{animation:nuevo 2.6s ease}
 
 @media (max-width:1000px){
   .mesa,.res-top,.res-grid,.grupos{grid-template-columns:1fr}
+  #panel{order:-1}
   svg.hilos{display:none}
   .visor,.panel{min-height:auto}
   .campos tr{opacity:1}
@@ -304,6 +348,11 @@ tr.nuevo td{animation:nuevo 2.6s ease}
   main{padding:20px 14px 48px}
   .visor .lienzo{padding:18px 12px}
   .campos td.lab{width:100px}
+  .ll{grid-template-columns:38px 1fr;row-gap:6px}
+  .ll .estado{grid-column:2;justify-self:start}
+  .ll-ir{display:none}
+  .acciones{flex-wrap:wrap}
+  .acciones .btn{flex:1 1 auto}
   .dl{grid-template-columns:120px 1fr}
 }
 @media (prefers-reduced-motion:reduce){
@@ -340,7 +389,7 @@ tr.nuevo td{animation:nuevo 2.6s ease}
   <section class="vista" id="v-docs">
     <div class="cab">
       <div><h1>Documentos</h1><p class="bajada">Repositorio único de facturas, notas de crédito y liquidaciones de granos de la campaña.</p></div>
-      <button class="btn btn-sec" id="csv"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12"/></svg>Exportar CSV</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-sec" id="reset" title="Borra lo cargado y vuelve a los documentos de ejemplo">Restablecer ejemplo</button><button class="btn btn-sec" id="csv"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12"/></svg>Exportar CSV</button></div>
     </div>
     <div class="caja">
       <div class="filtros"><input class="buscar" id="q" type="search" placeholder="Buscar por proveedor, CUIT, concepto o número" aria-label="Buscar"><div class="seg" id="seg"></div></div>
@@ -373,6 +422,7 @@ tr.nuevo td{animation:nuevo 2.6s ease}
       <div class="caja"><div class="caja-cab"><h2>Clasificación automática</h2><span class="chico" id="totDocs"></span></div><div style="padding:18px"><div class="mix" id="mix"></div><div class="ref" id="ref"></div></div></div>
       <div class="caja"><div class="caja-cab"><h2>Requiere atención</h2><span class="chico">Vencidos y próximos 3 días</span></div><div id="alertas"></div></div>
     </div>
+    <div class="caja" style="margin-top:20px"><div class="caja-cab"><h2>Deducciones y retenciones de liquidaciones, por concepto</h2><span class="chico" id="concNota"></span></div><div id="porConcepto"></div></div>
   </section>
 </main>
 
@@ -385,8 +435,10 @@ tr.nuevo td{animation:nuevo 2.6s ease}
 /* ===== utilidades ===== */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const plata=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
-const plata2=n=>'$ '+new Intl.NumberFormat('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
-const millones=n=>(n<0?'-':'')+'$ '+(Math.abs(n)/1e6).toLocaleString('es-AR',{minimumFractionDigits:1,maximumFractionDigits:1})+' M';
+const plata2=plata; // todos los importes en miles, sin decimales
+const miles=n=>new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n);
+const leerMiles=t=>{t=String(t??'').replace(/[$\s]/g,'');if(!t)return 0;const neg=/^-/.test(t);t=t.replace(/^-/,'').replace(/\./g,'').replace(',','.');const n=parseFloat(t);return isNaN(n)?0:(neg?-n:n)};
+const millones=plata;
 const HOY=new Date();HOY.setHours(0,0,0,0);
 const dia=n=>{const d=new Date(HOY);d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
 const fecha=s=>{const[y,m,d]=s.split('-');return `${d}/${m}/${y}`};
@@ -409,22 +461,26 @@ const tipoHTML=t=>`<span class="tipo" style="--tc:${TIPOS[t].c}"><i></i>${t}</sp
 const total=d=>d.neto+d.iva+d.otros;
 
 /* ===== datos simulados ===== */
-let docs=[
+const DOCS_EJEMPLO=[
  {id:1,tipo:'Factura A',nro:'0003-00012874',emisor:'Agroinsumos del Oeste SRL',cuit:'30-70988451-0',fecha:dia(-12),vence:dia(3),concepto:'Glifosato 66,2% 200 L y fertilizante MAP',neto:2850000,iva:598500,otros:85500,dir:'pagar',estado:'pend'},
- {id:2,tipo:'Liquidación de granos',nro:'LPG 3302-55418790',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(-6),vence:dia(2),concepto:'Soja, 64.320 kg a $412.000/tn',neto:24860300,iva:2782570,otros:-1328900,dir:'cobrar',estado:'pend'},
+ {id:2,tipo:'Liquidación de granos',nro:'LPG 3302-55418790',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(-6),vence:dia(2),concepto:'Soja, 64.320 kg a $412.000/tn',neto:24860300,iva:2782570,otros:-1328900,dir:'cobrar',estado:'pend',conceptos:[{tipo:'Deducción',concepto:'Comisión acopiador',importe:497206},{tipo:'Deducción',concepto:'Gastos de secada',importe:210000},{tipo:'Deducción',concepto:'Paritarias',importe:24860},{tipo:'Retención',concepto:'Retención IVA',importe:372904},{tipo:'Retención',concepto:'Retención Ganancias',importe:223930}]},
  {id:3,tipo:'Factura A',nro:'0001-00004521',emisor:'Transportes Ruta 5 SRL',cuit:'30-71122480-3',fecha:dia(-20),vence:dia(-2),concepto:'Flete de cereal, 3 viajes a puerto',neto:1420000,iva:298200,otros:0,dir:'pagar',estado:'pend'},
  {id:4,tipo:'Factura B',nro:'0005-00031077',emisor:'Ferretería Rural El Molino',cuit:'20-25874123-5',fecha:dia(-9),vence:dia(6),concepto:'Alambre, varillas y tranqueras',neto:487000,iva:0,otros:0,dir:'pagar',estado:'pend'},
- {id:5,tipo:'Liquidación de granos',nro:'LPG 3302-55402211',emisor:'Cooperativa Agrícola Unión del Sur',cuit:'30-50012478-0',fecha:dia(-28),vence:dia(-21),concepto:'Maíz, 120.500 kg a $198.000/tn',neto:22680400,iva:2505240,otros:-1190600,dir:'cobrar',estado:'ok'},
+ {id:5,tipo:'Liquidación de granos',nro:'LPG 3302-55402211',emisor:'Cooperativa Agrícola Unión del Sur',cuit:'30-50012478-0',fecha:dia(-28),vence:dia(-21),concepto:'Maíz, 120.500 kg a $198.000/tn',neto:22680400,iva:2505240,otros:-1190600,dir:'cobrar',estado:'ok',conceptos:[{tipo:'Deducción',concepto:'Comisión acopiador',importe:453608},{tipo:'Deducción',concepto:'Gastos de secada',importe:180000},{tipo:'Deducción',concepto:'Paritarias',importe:22680},{tipo:'Retención',concepto:'Retención IVA',importe:340206},{tipo:'Retención',concepto:'Retención Ganancias',importe:194106}]},
  {id:6,tipo:'Factura A',nro:'0002-00009963',emisor:'Servicios Agrícolas Pérez',cuit:'20-18456321-6',fecha:dia(-4),vence:dia(11),concepto:'Cosecha de soja, 180 ha',neto:5400000,iva:567000,otros:0,dir:'pagar',estado:'pend'},
  {id:7,tipo:'Nota de crédito',nro:'0003-00000412',emisor:'Agroinsumos del Oeste SRL',cuit:'30-70988451-0',fecha:dia(-3),vence:dia(3),concepto:'Bonificación por pago contado',neto:-142500,iva:-29925,otros:0,dir:'pagar',estado:'pend'},
  {id:8,tipo:'Factura A',nro:'0004-00017740',emisor:'Combustibles La Pampa SA',cuit:'30-69874512-2',fecha:dia(-15),vence:dia(-8),concepto:'Gasoil grado 2, 4.000 L',neto:3960000,iva:831600,otros:198000,dir:'pagar',estado:'ok'},
- {id:9,tipo:'Liquidación de granos',nro:'LPG 3302-55425560',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(-1),vence:dia(9),concepto:'Soja, 41.800 kg a $409.500/tn',neto:16050200,iva:1797620,otros:-860400,dir:'cobrar',estado:'pend'},
+ {id:9,tipo:'Liquidación de granos',nro:'LPG 3302-55425560',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(-1),vence:dia(9),concepto:'Soja, 41.800 kg a $409.500/tn',neto:16050200,iva:1797620,otros:-860400,dir:'cobrar',estado:'pend',conceptos:[{tipo:'Deducción',concepto:'Comisión acopiador',importe:321004},{tipo:'Deducción',concepto:'Gastos de secada',importe:120000},{tipo:'Deducción',concepto:'Paritarias',importe:16050},{tipo:'Retención',concepto:'Retención IVA',importe:240753},{tipo:'Retención',concepto:'Retención Ganancias',importe:162593}]},
 ];
+const CLAVE='agrodocs.documentos.v1';
+function cargarDocs(){try{const g=JSON.parse(localStorage.getItem(CLAVE)||'null');if(g&&Array.isArray(g.docs))return g.docs}catch(e){}return JSON.parse(JSON.stringify(DOCS_EJEMPLO))}
+function guardarDocs(){try{localStorage.setItem(CLAVE,JSON.stringify({guardado:new Date().toISOString(),docs}))}catch(e){}}
+let docs=cargarDocs();
 
 const EJEMPLOS=[
  {k:'fa',titulo:'Factura A, semillas',nota:'Foto tomada con el celular',d:{tipo:'Factura A',nro:'0002-00018455',emisor:'Semillera San Andrés SA',cuit:'30-71589632-6',fecha:dia(-1),vence:dia(14),concepto:'Semilla de trigo, 120 bolsas',neto:6240000,iva:655200,otros:187200,ivaL:'IVA 10,5%',otrosL:'Percepción IIBB'},
    cf:{tipo:99,nro:98,emisor:97,cuit:99,fecha:96,vence:94,concepto:95,neto:98,iva:97,otros:96}},
- {k:'lg',titulo:'Liquidación de granos, trigo',nota:'Formulario 1116 B del acopio',d:{tipo:'Liquidación de granos',nro:'LPG 3302-55431002',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(0),vence:dia(5),concepto:'Trigo, 85.200 kg a $221.500/tn',neto:18048900,iva:1895135,otros:-958300,ivaL:'IVA 10,5%',otrosL:'Retenciones',kg:85200,precio:221500,gastos:822900,grano:'Trigo'},
+ {k:'lg',titulo:'Liquidación de granos, trigo',nota:'Formulario 1116 B del acopio',d:{tipo:'Liquidación de granos',nro:'LPG 3302-55431002',emisor:'Acopio Los Tréboles SA',cuit:'30-68214557-5',fecha:dia(0),vence:dia(5),concepto:'Trigo, 85.200 kg a $221.500/tn',neto:18048900,iva:1895135,otros:-958300,ivaL:'IVA 10,5%',otrosL:'Retenciones',kg:85200,precio:221500,gastos:822900,grano:'Trigo',conceptos:[{tipo:'Retención',concepto:'Retención IVA',importe:541467},{tipo:'Retención',concepto:'Retención Ganancias',importe:416833}]},
    cf:{tipo:99,nro:97,emisor:98,cuit:99,fecha:97,vence:95,concepto:93,neto:96,iva:95,otros:94}},
  {k:'fb',titulo:'Factura B, veterinaria',nota:'Ticket con poca luz',d:{tipo:'Factura B',nro:'0007-00002210',emisor:'Veterinaria El Ombú',cuit:'20-29874563-2',fecha:dia(-2),vence:dia(8),concepto:'Vacuna antiaftosa, 250 dosis',neto:612500,iva:0,otros:0,ivaL:'IVA',otrosL:'Otros tributos'},
    cf:{tipo:96,nro:88,emisor:91,cuit:97,fecha:79,vence:82,concepto:86,neto:93,iva:99,otros:99}},
@@ -440,9 +496,17 @@ function ir(v){
 }
 $$('.tab').forEach(t=>t.onclick=()=>ir(t.dataset.v));
 function toast(m){const t=$('#toast');t.innerHTML=CHECK+'<span>'+m+'</span>';t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),3000)}
+const limpiarTxt=t=>String(t??'').replace(/[<>]/g,'').replace(/\s+/g,' ').trim();
+function ajustarDoc(d){
+  ['emisor','concepto','nro','cuit'].forEach(k=>{if(d[k]!=null)d[k]=limpiarTxt(d[k])});
+  if(d.tipo==='Nota de crédito'){['neto','iva','otros'].forEach(k=>{if(d[k])d[k]=-Math.abs(d[k])});if(d.totalLeido)d.totalLeido=-Math.abs(d.totalLeido)}
+  return d;
+}
+const normNro=n=>String(n||'').replace(/\D/g,'').replace(/^0+/,'');
+function esDuplicado(d){return !!d.nro&&docs.some(x=>normNro(x.nro)===normNro(d.nro)&&(!d.cuit||!x.cuit||x.cuit.replace(/\D/g,'')===d.cuit.replace(/\D/g,'')))}
 function estado(d){
   if(d.estado==='ok') return `<span class="estado e-ok">${d.dir==='cobrar'?'Cobrado':'Pagado'}</span>`;
-  if(faltan(d.vence)<0) return `<span class="estado e-venc">Vencido</span>`;
+  if(faltan(d.vence)<0) return `<span class="estado e-venc">${d.dir==='cobrar'?'Cobro atrasado':'Vencido'}</span>`;
   return d.dir==='cobrar'?`<span class="estado e-cobrar">A cobrar</span>`:`<span class="estado e-pagar">A pagar</span>`;
 }
 let recien=null;
@@ -520,9 +584,9 @@ function textoPorLineas(items){
 async function leerPDF(file,prog){
   const lib=await pdfLib(); const doc=await lib.getDocument({data:await leerComo(file,'buf')}).promise;
   const pag1=await doc.getPage(1); const vista=await renderPagina(pag1,1.6); prog(.25);
-  let texto='';
-  for(let i=1;i<=Math.min(doc.numPages,2);i++){const p=i===1?pag1:await doc.getPage(i);texto+=textoPorLineas((await p.getTextContent()).items)+'\n'}
-  if(texto.replace(/\s/g,'').length>=40){prog(1);return {vista,texto,conf:96,fuente:'PDF con texto, lectura directa',paginas:doc.numPages}}
+  let texto='', items1=null;
+  for(let i=1;i<=Math.min(doc.numPages,2);i++){const p=i===1?pag1:await doc.getPage(i);const its=(await p.getTextContent()).items;if(i===1)items1=its;texto+=textoPorLineas(its)+'\n'}
+  if(texto.replace(/\s/g,'').length>=40){prog(1);return {vista,texto,conf:96,fuente:'PDF con texto, lectura directa',paginas:doc.numPages,est:analizarPosiciones(items1)}}
   const r=await ocr(await renderPagina(pag1,2.2),p=>prog(.3+p*.7));
   return {vista,texto:r.texto,conf:r.conf,fuente:'PDF escaneado, leído con OCR',paginas:doc.numPages};
 }
@@ -560,8 +624,8 @@ async function procesarCola(){
     try{
       const r=it.tipo==='pdf'?await leerPDF(it.file,prog):await leerImagen(it.file,it.tipo,prog);
       Object.assign(it,r);
-      const {d,cf}=interpretar(it.texto,it.conf); it.d=d; it.cf=cf;
-      it.valido=cuitValido(d.cuit)&&(d.totalLeido==null||Math.abs(total(d)-d.totalLeido)<1)&&Object.entries(cf).every(([k,v])=>v>=90)&&!(d.nro&&docs.some(x=>x.nro===d.nro));
+      const {d,cf}=interpretar(it.texto,it.conf,it.est); it.d=d; it.cf=cf;
+      it.valido=cuitValido(d.cuit)&&(d.totalLeido==null||Math.abs(total(d)-d.totalLeido)<1)&&Object.entries(cf).every(([k,v])=>v>=90)&&!esDuplicado(d);
       it.estado='listo';
     }catch(e){it.estado='error';it.error=e.message==='sin-motor'||e.message==='sin-libreria'?'No cargó el motor de lectura. Revisá la conexión a internet.':it.tipo==='pdf'?'No se pudo abrir el PDF. Puede estar protegido con contraseña o dañado.':'No se pudo leer la imagen. Probá con una más nítida.'}
     it.file=null; refrescar(it);
@@ -576,6 +640,7 @@ function refrescar(it){
 /* un solo archivo: mismo recorrido de antes */
 const PASOS_ARCH=[['Abriendo el archivo','PDF o imagen'],['Leyendo el texto','Directo del PDF u OCR'],['Interpretando campos','CUIT, fechas, importes e impuestos'],['Validando','CUIT, totales y duplicados']];
 function vistaUnica(it){
+  ejemploActual=null;
   enRevision=null; $('#hilos').innerHTML='';
   $('#lienzo').innerHTML=`<div class="doc-wrap leyendo" id="doc"><div class="cargando-doc">${it.tipo==='pdf'?'PDF':'IMG'}</div><div class="escaner"></div></div>`;
   $('#pieVisor').innerHTML=`<span>${esc(it.nombre)}</span><span id="estadoVisor">Leyendo…</span>`;
@@ -597,6 +662,8 @@ const ESTADOS={espera:['En espera','e-pagar'],leyendo:['Leyendo','e-cobrar'],lis
 function vistaLote(){
   enRevision=null; $('#hilos').innerHTML='';
   const hechos=cola.filter(c=>!['espera','leyendo'].includes(c.estado)).length;
+  const vistos=new Set();
+  cola.forEach(c=>{if(c.estado!=='listo'||!c.valido)return;const k=normNro(c.d.nro)+'|'+(c.d.cuit||'').replace(/\D/g,'');if(esDuplicado(c.d)||(c.d.nro&&vistos.has(k))){c.valido=false;c.repetido=true}else vistos.add(k)});
   const validos=cola.filter(c=>c.estado==='listo'&&c.valido);
   const pend=cola.filter(c=>c.estado==='listo');
   const ultimo=[...cola].reverse().find(c=>c.vista);
@@ -610,7 +677,7 @@ function vistaLote(){
     <ul class="lista-lote">${cola.map(c=>{const st=c.estado==='listo'&&c.valido?'valido':c.estado;const [lab,cls]=ESTADOS[st];
       return `<li class="ll ${c.estado}" ${c.estado==='listo'?`data-rev="${c.id}" tabindex="0"`:''}>
         <span class="ll-ic ${c.tipo||''}">${c.tipo==='pdf'?'PDF':c.tipo?'IMG':'?'}</span>
-        <span class="ll-txt"><b>${esc(c.nombre)}</b><span class="chico">${c.estado==='listo'||c.estado==='archivado'?`${esc(c.d.tipo)}${c.d.emisor?', '+esc(c.d.emisor):''}${c.d.totalLeido!=null||c.d.neto?'. Total '+plata(total(c.d)):''}`:c.estado==='error'?esc(c.error):c.estado==='leyendo'?`Leyendo… ${Math.round((c.prog||0)*100)}%`:c.estado==='descartado'?'No se archivó':'En la fila'}</span></span>
+        <span class="ll-txt"><b>${esc(c.nombre)}</b><span class="chico">${c.repetido&&c.estado==='listo'?'<span class="rep">Repetido: ya está en el lote o en Documentos. </span>':''}${c.estado==='listo'||c.estado==='archivado'?`${esc(c.d.tipo)}${c.d.emisor?', '+esc(c.d.emisor):''}${c.d.totalLeido!=null||c.d.neto?(/\.$/.test(c.d.emisor||'')?' ':'. ')+'Total '+plata(total(c.d)):''}`:c.estado==='error'?esc(c.error):c.estado==='leyendo'?`Leyendo… ${Math.round((c.prog||0)*100)}%`:c.estado==='descartado'?'No se archivó':'En la fila'}</span></span>
         <span class="estado ${cls}">${lab}</span>
         ${c.estado==='listo'?'<span class="ll-ir">Revisar</span>':''}</li>`}).join('')}</ul>
     <p class="chico" style="margin-top:12px">${pend.length?`Los marcados como <b>Validado</b> tienen CUIT válido, totales que cierran y todos los campos con buena confianza. El resto conviene revisarlo uno por uno.`:hechos===cola.length?'Lote terminado.':''}</p>
@@ -620,7 +687,7 @@ function vistaLote(){
     </div></div>`;
   $$('[data-rev]').forEach(li=>{li.onclick=()=>revisar(+li.dataset.rev);li.onkeydown=e=>{if(e.key==='Enter')revisar(+li.dataset.rev)}});
   $('#mas').onchange=e=>{const fs=[...e.target.files];if(fs.length)encolar(fs);e.target.value=''};
-  const av=$('#archValidos'); if(av) av.onclick=()=>{validos.forEach(c=>{guardarDoc(c.d,c);c.estado='archivado'});toast(`${validos.length===1?'1 comprobante archivado':validos.length+' comprobantes archivados'}`);pintar();vistaLote()};
+  const av=$('#archValidos'); if(av) av.onclick=()=>{let n=0,rep=0;validos.forEach(c=>{if(esDuplicado(c.d)){c.valido=false;rep++;return}guardarDoc(c.d,c);c.estado='archivado';n++});toast(`${n===1?'1 comprobante archivado':n+' comprobantes archivados'}${rep?`. ${rep===1?'1 quedó':rep+' quedaron'} para revisar por estar repetido${rep===1?'':'s'}`:''}`);pintar();vistaLote()};
   const vd=$('#verDocs'); if(vd) vd.onclick=()=>{inicio();ir('docs')};
 }
 function revisar(id){
@@ -632,9 +699,204 @@ function revisar(id){
   completar(it.vista);
 }
 function guardarDoc(d,it){
+  ajustarDoc(d);
   const n={id:Math.max(0,...docs.map(x=>x.id))+1,foto:true,origen:it&&it.tipo==='pdf'?'Cargado desde PDF':'Cargado por foto',tipo:d.tipo,nro:d.nro,emisor:d.emisor,cuit:d.cuit,concepto:d.concepto,fecha:d.fecha,vence:d.vence,
-    neto:+d.neto||0,iva:+d.iva||0,otros:+d.otros||0,dir:d.tipo==='Liquidación de granos'?'cobrar':'pagar',estado:'pend'};
+    neto:+d.neto||0,iva:+d.iva||0,otros:+d.otros||0,dir:d.tipo==='Liquidación de granos'?'cobrar':'pagar',estado:'pend',rubros:d.rubros||(it&&it.d&&it.d.rubros)||null,conceptos:d.conceptos||(it&&it.d&&it.d.conceptos)||null};
   docs.push(n); recien=n.id; return n;
+}
+
+/* --- estructura de PDF por posiciones: pares etiqueta/valor, tablas y rubros --- */
+const normK=t=>sinAcento(String(t)).toUpperCase().replace(/[:.]+$/,'').replace(/\s+/g,' ').trim();
+const TITULOS=/^(COMPRADOR|VENDEDOR|CONDICIONES DE LA OPERACION|MERCADERIA ENTREGADA|OPERACION|DEDUCCIONES|RETENCIONES|PERCEPCIONES|IMPORTES TOTALES( DE LA LIQUIDACION)?|DATOS DEL CORREDOR|CORREDOR)$/;
+function analizarPosiciones(items){
+  const pos=items.filter(i=>i.str&&i.str.trim()).map(i=>({x:i.transform[4],y:i.transform[5],w:i.width||i.str.length*4,t:i.str.trim()}));
+  pos.sort((a,b)=>b.y-a.y||a.x-b.x);
+  const filas=[];
+  for(const p of pos){let f=filas.find(r=>Math.abs(r.y-p.y)<=3.5);if(!f){f={y:p.y,its:[]};filas.push(f)}f.its.push(p)}
+  filas.sort((a,b)=>b.y-a.y); filas.forEach(f=>f.its.sort((a,b)=>a.x-b.x));
+  const esEtq=t=>/:\s*$/.test(t)&&!/^\d/.test(t);
+  const esNro=t=>/^[A-Za-zÁÉÍÓÚáéíóúñ .]{3,30} N[°º]\s+\S/.test(t);
+  const esInline=t=>(/^[^\d:][^:]{1,40}:\s*\S/.test(t)&&!/^\d{1,2}:\d{2}/.test(t)&&!/^https?:/i.test(t))||esNro(t);
+  const kv=[];
+  for(const f of filas){
+    f.tieneEtq=f.its.some(i=>esEtq(i.t)||esInline(i.t));
+    for(let j=0;j<f.its.length;j++){const it=f.its[j];
+      if(esInline(it.t)){const k=it.t.includes(':')?it.t.indexOf(':'):it.t.search(/N[°º]/)+2;const pares=[it.t.slice(0,k),it.t.slice(k+1).trim()];
+        let v=pares[1];let n=j+1;while(n<f.its.length&&!esEtq(f.its[n].t)&&!esInline(f.its[n].t)&&f.its[n].x-(f.its[n-1].x+f.its[n-1].w)<25){v+=' '+f.its[n].t;n++}
+        kv.push({k:pares[0].trim(),v:v.trim(),x:it.x,y:f.y})}
+      else if(esEtq(it.t)){let v=[];let n=j+1;while(n<f.its.length&&!esEtq(f.its[n].t)&&!esInline(f.its[n].t)){v.push(f.its[n].t);n++}
+        kv.push({k:it.t.replace(/:\s*$/,'').trim(),v:v.join(' ').trim(),x:it.x,y:f.y})}
+    }
+  }
+  // tablas: bloque de títulos de columna + filas de valores debajo
+  const esTitulo=f=>f.its.length<=2&&f.its.every(i=>TITULOS.test(normK(i.t)));
+  const esCab=f=>!f.tieneEtq&&!esTitulo(f)&&f.its.every(i=>!/\d/.test(i.t)||/^(N°|%)/.test(i.t)&&!/\d{3}/.test(i.t))&&f.its.some(i=>/[a-z]/.test(i.t));
+  const tablas=[]; let cab=null, ultimaY=null, tabla=null;
+  for(let i=0;i<filas.length;i++){const f=filas[i];
+    if(esTitulo(f)){cab=null;tabla=null;continue}
+    if(esCab(f)){
+      if(cab&&cab.ultY-f.y<=14&&!tabla){cab.filas.push(f);cab.ultY=f.y}
+      else{cab={filas:[f],ultY:f.y};tabla=null}
+      continue}
+    if(!cab) continue;
+    if(f.tieneEtq&&!(tabla&&f.its.length>=2)&&!(f.its.length>=3)) continue;
+    const gap=(tabla?ultimaY:cab.ultY)-f.y;
+    if(gap>(tabla?24:42)){cab=null;tabla=null;continue}
+    if(!tabla){
+      const cols=[];
+      for(const r of cab.filas)for(const it of r.its){const x0=it.x-2,x1=it.x+it.w+2;let c=cols.find(c=>x0<c.x1&&x1>c.x0);if(c){c.x0=Math.min(c.x0,x0);c.x1=Math.max(c.x1,x1);c.l.push(it.t)}else cols.push({x0,x1,l:[it.t]})}
+      cols.sort((a,b)=>a.x0-b.x0); cols.forEach(c=>c.label=c.l.join(' ').replace(/\s+/g,' ').trim());
+      if(cols.length<2){cab=null;continue}
+      tabla={cols:cols.map(c=>c.label),_c:cols,filas:[],y0:cab.filas[0].y,y1:f.y}; tablas.push(tabla);
+    }
+    const fila=tabla._c.map(()=>'');
+    const libres=[];
+    for(const it of f.its){let best=-1,ov=0;tabla._c.forEach((c,ci)=>{const o=Math.min(c.x1,it.x+it.w)-Math.max(c.x0,it.x);if(o>ov){ov=o;best=ci}});
+      if(best>=0&&!fila[best]) fila[best]=it.t; else if(best>=0&&ov>it.w*.5) fila[best]+=' '+it.t; else libres.push(it)}
+    for(const it of libres){const cx=it.x+it.w/2;let ci=-1;
+      const gi=tabla.cols.findIndex(l=>/GRANO/i.test(sinAcento(l)));
+      if(gi>=0&&!fila[gi]&&/SOJA|MAIZ|TRIGO|GIRASOL|SORGO|CEBADA/i.test(sinAcento(it.t))) ci=gi;
+      else{let dmin=1e9;tabla._c.forEach((c,k)=>{if(fila[k])return;const dd=Math.abs((c.x0+c.x1)/2-cx);if(dd<dmin){dmin=dd;ci=k}})}
+      if(ci>=0) fila[ci]=fila[ci]?fila[ci]+' '+it.t:it.t}
+    tabla.filas.push(fila.map(c=>c.replace(/^-\s+(?=\d)/,''))); tabla.y1=f.y; ultimaY=f.y; f.enTabla=true;
+  }
+  tablas.forEach(t=>delete t._c);
+  const yTab=new Set(filas.filter(f=>f.enTabla).map(f=>f.y));
+  return {filas,kv:kv.filter(e=>!yTab.has(e.y)),tablas};
+}
+const valorNum=v=>{if(v==null)return null;const m=String(v).replace(/[%\s]/g,'').match(/-?\$?-?[\d.,]*\d|-?\$?,\d{2}/);if(!m)return null;let t=m[0].replace('$','');if(/^,\d{2}$/.test(t))return 0;return numeroAR(t)};
+function buscarKV(est,re,{dentro}={}){const e=est.kv.find(e=>re.test(normK(e.k))&&(!dentro||dentro(e)));return e?e.v:null}
+function buscarCol(est,re){for(const t of est.tablas){const i=t.cols.findIndex(c=>re.test(normK(c)));if(i>=0){const f=t.filas.find(f=>f[i]);if(f)return f[i]}}return null}
+const val=(est,res)=>{for(const re of [].concat(res)){const v=buscarKV(est,re)??buscarCol(est,re);if(v!=null&&v!=='')return v}return null};
+
+/* rubros de una liquidación de granos (formato LPG / F. 1116) */
+function rubrosLPG(est){
+  const titulos=[];
+  for(const f of est.filas)for(const it of f.its){const k=normK(it.t);if(TITULOS.test(k)||/^DATOS ADICIONALES/.test(k))titulos.push({k,y:f.y,x:it.x,w:it.w})}
+  const comp=titulos.find(t=>t.k==='COMPRADOR'), vend=titulos.find(t=>t.k==='VENDEDOR');
+  const corte=comp&&vend?((comp.x+comp.w/2)+(vend.x+vend.w/2))/2:300;
+  const yT=k=>{const t=titulos.find(t=>t.k.startsWith(k));return t?t.y:null};
+  const secY=titulos.filter(t=>!['COMPRADOR','VENDEDOR'].includes(t.k)).map(t=>t.y).concat(comp?[comp.y]:[]).sort((a,b)=>b-a);
+  const hasta=y=>{const sig=secY.filter(v=>v<y-1);return sig.length?sig[0]:-1e9};
+  const entre=(y0,y1)=>e=>e.y<y0+1&&e.y>y1;
+  const R=[];
+  const kvR=(fil)=>est.kv.filter(fil).map(e=>[e.k,e.v]);
+  const tabR=(y0,y1)=>est.tablas.filter(t=>t.y0<y0+1&&t.y0>y1);
+  const add=(titulo,campos,tablas=[])=>{const c=[...campos];const tt=[];const fijo=/Deducciones|Retenciones|Percepciones/.test(titulo);for(const t of tablas){if(t.filas.length===1&&!fijo)t.cols.forEach((l,i)=>{if(t.filas[0][i])c.push([l,t.filas[0][i]])});else tt.push(t)}if(c.length||tt.length)R.push({titulo,campos:c,tablas:tt})};
+  // datos generales: lo que está arriba del comprador
+  const yComp=comp?comp.y:Infinity;
+  const arriba=est.filas.filter(f=>f.y>yComp+1);
+  const gen=kvR(e=>e.y>yComp+1);
+  const sueltos=arriba.flatMap(f=>f.its).filter(i=>!/:/.test(i.t)).map(i=>i.t);
+  const fch=sueltos.find(t=>/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(t)), lugar=sueltos.find(t=>/^,/.test(t));
+  if(fch) gen.unshift(['Fecha',fch]); if(lugar) gen.splice(1,0,['Lugar',lugar.replace(/^,\s*/,'')]);
+  add('Datos de la operación',gen);
+  if(comp){const y1=hasta(comp.y);
+    const noCor=e=>!/CORREDOR/i.test(sinAcento(e.k));
+    add('Comprador',kvR(e=>entre(comp.y,y1)(e)&&e.x<corte&&noCor(e)));
+    add('Vendedor',kvR(e=>entre(comp.y,y1)(e)&&e.x>=corte&&noCor(e)));
+    const cor=kvR(e=>/CORREDOR/i.test(sinAcento(e.k)));
+    if(cor.length) add('Corredor',cor.map(([k,v])=>[k,v||'—']));}
+  const NOM={'CONDICIONES DE LA OPERACION':'Condiciones de la operación','MERCADERIA ENTREGADA':'Mercadería entregada','OPERACION':'Operación','DEDUCCIONES':'Deducciones','RETENCIONES':'Retenciones','PERCEPCIONES':'Percepciones','IMPORTES TOTALES DE LA LIQUIDACION':'Importes totales','IMPORTES TOTALES':'Importes totales'};
+  for(const t of titulos){if(!NOM[t.k])continue;const y1=hasta(t.y);
+    add(NOM[t.k],kvR(entre(t.y,y1)).map(([k,v])=>[k,v||'—']),tabR(t.y,y1))}
+  const da=est.kv.find(e=>/^DATOS ADICIONALES/.test(normK(e.k)));
+  if(da) add('Datos adicionales',[['Detalle',da.v]]);
+  return R;
+}
+
+function conceptosDe(rubros){
+  const out=[];
+  for(const r of rubros||[]){if(!/Deducciones|Retenciones|Percepciones/.test(r.titulo))continue;
+    const tipo=/Deduc/.test(r.titulo)?'Deducción':/Percep/.test(r.titulo)?'Percepción':'Retención';
+    for(const t of r.tablas){const C=t.cols.map(normK);
+      let ic=C.findIndex(c=>/CONCEPTO|DESCRIPCI|DETALLE/.test(c)); if(ic<0) ic=0;
+      let it=C.findIndex(c=>/^TOTAL$/.test(c)); if(it<0) it=C.findIndex(c=>/^IMPORTE( RETENIDO| DEDUCIDO)?$/.test(c)); if(it<0) it=C.length-1;
+      const ib=C.findIndex(c=>/^(BASE|IMPORTE BASE|BASE IMPONIBLE)$/.test(c)), ia=C.findIndex(c=>/^%$|^ALICUOTA$|^PORCENTAJE$/.test(c));
+      for(const f of t.filas){const imp=valorNum(f[it]); if(!f[ic]) continue;
+        out.push({tipo,concepto:f[ic].replace(/\s+/g,' ').trim(),importe:Math.abs(imp||0),alicuota:ia>=0?f[ia]:'',base:ib>=0?valorNum(f[ib]):null})}}
+    for(const [k,v] of r.campos){const n=valorNum(v);if(n!=null)out.push({tipo,concepto:k,importe:Math.abs(n)})}
+  }
+  return out;
+}
+function conceptosHTML(lista,titulo='Deducciones y retenciones'){
+  if(!lista||!lista.length) return '';
+  const tot=lista.reduce((a,c)=>a+c.importe,0);
+  return `<div class="conceptos"><h3>${titulo}</h3><table><thead><tr><th>Concepto</th><th>Tipo</th><th class="der">Importe</th></tr></thead><tbody>
+    ${lista.map(c=>`<tr><td>${esc(c.concepto)}${c.alicuota&&valorNum(c.alicuota)?` <span class="chico">${esc(c.alicuota)}%</span>`:''}</td><td class="chico">${c.tipo}</td><td class="der num">${plata2(c.importe)}</td></tr>`).join('')}
+    </tbody><tfoot><tr><td colspan="2">Total descontado</td><td class="der num">${plata2(tot)}</td></tr></tfoot></table></div>`;
+}
+function numAuto(t){t=t.replace(/[$\s]/g,'');const neg=/^-/.test(t);t=t.replace(/^-/,'');
+  const d=Math.max(t.lastIndexOf('.'),t.lastIndexOf(','));
+  if(d>=0&&t.includes('.')&&t.includes(',')) t=t.slice(0,d).replace(/[.,]/g,'')+'.'+t.slice(d+1);
+  else if(d>=0){const dec=t.length-d-1, veces=t.split(t[d]).length-1; t=(veces===1&&dec!==3)?t.slice(0,d).replace(/[.,]/g,'')+'.'+t.slice(d+1):t.replace(/[.,]/g,'')}
+  const n=parseFloat(t);return isNaN(n)?null:(neg?-n:n)}
+const NO_FMT=/%|ALICUOTA|FACTOR|PROTEICO|GRADO|CERTIFICADO|C\.?O\.?E|C\.?U\.?I\.?T|ORDEN|CONTRATO|LIQUIDAC|REGISTRAC|CAMPANA|N°|NUMERO|CODIGO|INGRESOS BRUTOS|^I\.?V\.?A$|FECHA/;
+function fmtValor(v,etq=''){const s=String(v??'').trim(); if(!s) return s;
+  const pm=s.match(/^(-?\d+(?:[.,]\d+)?)\s*(%?)$/);
+  if(pm&&/[.,]/.test(pm[1])&&(pm[2]||/%|ALICUOTA|FACTOR|PROTEICO/.test(normK(etq)))){const n=parseFloat(pm[1].replace(',','.'));return (n%1===0?miles(n):n.toLocaleString('es-AR',{maximumFractionDigits:2}))+(pm[2]?' %':'')}
+  if(NO_FMT.test(normK(etq))) return s;
+  let m=s.match(/^(-?)\s*\$\s*(-?[\d.,]+)$/); if(m){const n=numAuto(m[1]+m[2]);if(n==null)return s;return Math.abs(n)<100&&n%1?'$ '+n.toLocaleString('es-AR',{maximumFractionDigits:4}):plata(n)}
+  m=s.match(/^([\d.,]+)\s*kg\.?$/i); if(m){const n=numAuto(m[1]);return n==null?s:miles(n)+' kg'}
+  if(/^-?[\d.,]*[.,]\d{2}$/.test(s)||/^-?\d{1,3}([.,]\d{3})+$/.test(s)){const n=numAuto(s);return n==null?s:miles(n)}
+  return s}
+function rubrosHTML(rubros,abiertos=1){
+  return rubros.map((r,i)=>`<details class="rubro" ${i<abiertos?'open':''}><summary><span>${esc(r.titulo)}</span><span class="chico">${r.tablas.length?r.tablas.reduce((a,t)=>a+t.filas.length,0)+' filas':(r.campos.length===1?'1 dato':r.campos.length+' datos')}</span></summary>
+    ${r.campos.length?`<dl class="rubro-dl">${r.campos.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(fmtValor(v,k))}</dd>`).join('')}</dl>`:''}
+    ${r.tablas.map(t=>`<div class="rubro-tabla"><table><thead><tr>${t.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${t.filas.map(f=>`<tr>${f.map((c,j)=>`<td>${esc(fmtValor(c,t.cols[j]))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`).join('')}
+  </details>`).join('');
+}
+function rubrosCSV(d){
+  const filas=[['Rubro','Campo','Valor']];
+  const vc=(v,k)=>{const s=String(v??'').trim();if(!s)return s;const pm=s.match(/^(-?\d+\.\d+)\s*(%?)$/);if(pm)return pm[1].replace('.',',')+(pm[2]?' %':'');if(NO_FMT.test(normK(k)))return s;const kg=s.match(/^([\d.,]+)\s*kg\.?$/i);if(kg){const n=numAuto(kg[1]);return n==null?s:numCSV(n)}
+    if(/^-?\s*\$?\s*-?[\d.,]+$/.test(s)&&/[$.,]/.test(s)){const n=numAuto(s);return n==null?s:numCSV(n)}return s};
+  for(const r of d.rubros){for(const [k,v] of r.campos)filas.push([r.titulo,k,vc(v,k)]);
+    for(const t of r.tablas)t.filas.forEach((f,i)=>t.cols.forEach((c,j)=>filas.push([r.titulo+' (fila '+(i+1)+')',c,vc(f[j],c)])))}
+  const csv=filas.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download=`liquidacion_${(d.nro||'granos').replace(/\W+/g,'_')}.csv`;a.click();
+  toast('Rubros descargados en CSV');
+}
+
+/* afinar los campos principales con la estructura del PDF */
+function refinarConEstructura(d,cf,est,ok,dudo,T){
+  const n=re=>valorNum(val(est,re));
+  if(d.tipo==='Liquidación de granos'){
+    const rub=rubrosLPG(est); d.rubros=rub;
+    const de=(tit,re)=>{const r=rub.find(r=>r.titulo===tit);const c=r&&r.campos.find(([k])=>re.test(normK(k)));return c?c[1]:null};
+    const rs=de('Comprador',/RAZON SOCIAL/), cu=de('Comprador',/C\.?U\.?I\.?T/);
+    if(rs){d.emisor=rs;ok('emisor')} if(cu){const c=cu.replace(/\D/g,'');if(c.length===11){d.cuit=`${c.slice(0,2)}-${c.slice(2,10)}-${c.slice(10)}`;cuitValido(d.cuit)?ok('cuit'):dudo('cuit')}}
+    const coe=de('Datos de la operación',/C\.?O\.?E/); const ord=de('Datos de la operación',/NUMERO DE ORDEN/);
+    if(coe){d.nro='COE '+coe.replace(/\D/g,'');ok('nro')}else if(ord){d.nro=ord;ok('nro')}
+    const f=de('Datos de la operación',/^FECHA$/); if(f){const fs=fechasDe(f);if(fs[0]){d.fecha=fs[0];ok('fecha')}}
+    const grano=de('Condiciones de la operación',/GRANO/), camp=de('Condiciones de la operación',/CAMPANA/), kg=de('Operación',/PESO NETO/);
+    const g=grano&&grano.replace(/^\d+\s*-\s*/,''); 
+    const kgn=kg&&valorNum(kg.replace(/kg\.?/i,''));
+    d.concepto=[g?g[0]+g.slice(1).toLowerCase():'',kgn?kgn.toLocaleString('es-AR')+' kg':'',camp?'campaña '+camp:''].filter(Boolean).join(', '); if(d.concepto)ok('concepto');
+    const sub=valorNum(de('Operación',/^SUBTOTAL/)), iva=valorNum(de('Operación',/^IMPORTE IVA/));
+    const tot=valorNum(de('Importes totales',/NETO A PAGAR|NETO A COBRAR/))??valorNum(de('Importes totales',/TOTAL OPERACION/));
+    const ded=(valorNum(de('Importes totales',/TOTAL DEDUCCIONES/))||0)+(valorNum(de('Importes totales',/TOTAL RETENCIONES/))||0)+(valorNum(de('Importes totales',/OTRAS RETENCIONES/))||0);
+    if(sub!=null){d.neto=sub;ok('neto')} if(iva!=null){d.iva=iva;ok('iva')}
+    d.conceptos=conceptosDe(rub);
+    const sumC=d.conceptos.reduce((a,c)=>a+c.importe,0);
+    d.otros=-Math.abs(ded||sumC); ok('otros');
+    if(tot!=null){d.totalLeido=tot;ok('total')}
+    const pago=de('Datos de la operación',/FECHA DE PAGO/)||de('Importes totales',/FECHA DE PAGO/);
+    if(pago&&fechasDe(pago)[0]){d.vence=fechasDe(pago)[0];ok('vence')}else{d.vence=d.fecha;dudo('vence')}
+    return;
+  }
+  // facturas y notas de crédito
+  const tot=n([/^TOTAL GENERAL$/,/^IMPORTE TOTAL$/,/^TOTAL A PAGAR$/,/^TOTAL COMPROBANTE$/,/^TOTAL$/]), neto=n([/^NETO GRAVADO$/,/^IMPORTE NETO GRAVADO$/,/^SUBTOTAL$/]);
+  const ivaE=est.kv.filter(e=>/^I\.?V\.?A\.?(\s|$)/.test(normK(e.k))&&!/INSCRIPTO|RESPONSABLE|EXENTO|MONOTRIB|CONSUMIDOR/.test(normK(e.v))&&/[.,]\d{2}(?!\d)/.test(e.v)).map(e=>valorNum(e.v)).filter(v=>v!=null);
+  const ivaC=[];for(const t of est.tablas)t.cols.forEach((c,i)=>{if(/^I\.?V\.?A\.?(\s|$)|^IVA \d/.test(normK(c))){const v=valorNum(t.filas[0]&&t.filas[0][i]);if(v!=null)ivaC.push(v)}});
+  const ivas=ivaE.length?ivaE:ivaC;
+  const otrosL=[];for(const e of est.kv)if(/PERCEP|IIBB|INGRESOS BRUTOS|IMP\.? INT|OTROS TRIB/.test(normK(e.k))&&!/N°|NRO|NUMERO/.test(normK(e.k))){const v=valorNum(e.v);if(v!=null&&/[.,]\d{2}(?!\d)/.test(e.v)&&!/\d-\d/.test(e.v))otrosL.push(v)}
+  for(const t of est.tablas)t.cols.forEach((c,i)=>{if(/PERCEP|OTROS TRIB|IMP\.? INT/.test(normK(c))){const v=valorNum(t.filas[0]&&t.filas[0][i]);if(v!=null)otrosL.push(v)}});
+  if(tot!=null){d.totalLeido=tot;ok('total')}
+  if(neto!=null){d.neto=neto;ok('neto')}
+  if(ivas.length){d.iva=+ivas.reduce((a,b)=>a+b,0).toFixed(2);ok('iva')}
+  if(otrosL.length){d.otros=+otrosL.reduce((a,b)=>a+b,0).toFixed(2);ok('otros')}else if(tot!=null&&neto!=null&&Math.abs(neto+d.iva-tot)<1){d.otros=0;ok('otros')}
+  const desc=buscarCol(est,/DESCRIPCI|DETALLE|CONCEPTO|PRODUCTO/); if(desc){d.concepto=desc;ok('concepto')}
+  const f=buscarKV(est,/^FECHA( DE EMISION)?$/); if(f&&fechasDe(f)[0]){d.fecha=fechasDe(f)[0];ok('fecha')}
 }
 
 /* --- reglas de interpretación para comprobantes argentinos --- */
@@ -646,7 +908,7 @@ function montos(linea){return [...linea.matchAll(/-?\$?\s?\d{1,3}(?:[.,\s]\d{3})
 function cuitValido(c){const d=(c||'').replace(/\D/g,'');if(d.length!==11)return false;const w=[5,4,3,2,7,6,5,4,3,2];let s=0;for(let i=0;i<10;i++)s+=+d[i]*w[i];let v=11-s%11;if(v===11)v=0;if(v===10)v=9;return v===+d[10]}
 function fechasDe(linea){const out=[];for(const m of linea.matchAll(/(?<!\d)(\d{1,2})\s?[\/\-.]\s?(\d{1,2})\s?[\/\-.]\s?(\d{2,4})(?!\d)/g)){let[_,dd,mm,yy]=m;dd=+dd;mm=+mm;yy=+yy;if(yy<100)yy+=2000;if(dd>=1&&dd<=31&&mm>=1&&mm<=12&&yy>=2000&&yy<=2100)out.push(`${yy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`)}return out}
 
-function interpretar(texto,confOCR){
+function interpretar(texto,confOCR,est){
   const lineas=texto.split(/\n/).map(l=>l.trim()).filter(Boolean);
   const T=sinAcento(texto).toUpperCase();
   const base=Math.max(55,Math.min(95,Math.round(confOCR)));
@@ -655,7 +917,7 @@ function interpretar(texto,confOCR){
 
   // tipo de documento
   const cod=T.match(/COD(?:IGO)?\.?\s*(?:N[°ºO.]?\s*)?0?(\d{1,3})\b/);
-  if(/1116|\bLPG\b|\bCOE\b|NETO A COBRAR|LIQUIDACION PRIMARIA/.test(T)||(/LIQUIDACION/.test(T)&&/GRANO|ACOPIO/.test(T))){d.tipo='Liquidación de granos';ok('tipo')}
+  if(/1116|\bLPG\b|\bC\.?O\.?E\.?\s*:|NETO A COBRAR|LIQUIDACION PRIMARIA|COMPRAVENTA DE GRANOS|MERCADERIA ENTREGADA/.test(T)||(/LIQUIDACION/.test(T)&&/GRANO|ACOPIO/.test(T))){d.tipo='Liquidación de granos';ok('tipo')}
   else if(/NOTA DE CREDITO/.test(T)||(cod&&['3','8','13'].includes(cod[1]))){d.tipo='Nota de crédito';ok('tipo')}
   else if(cod&&['1','6','11'].includes(cod[1])){d.tipo={'1':'Factura A','6':'Factura B','11':'Factura C'}[cod[1]];ok('tipo')}
   else{const l=texto.match(/^\s*([ABC])\s*$/m)||T.match(/FACTURA\s+([ABC])\b/);
@@ -690,7 +952,7 @@ function interpretar(texto,confOCR){
   for(const l of lineas){const fs=fechasDe(l);if(!fs.length)continue;const u=sinAcento(l).toUpperCase();
     if(/CAE|INICIO|ACTIVIDAD/.test(u)&&!/PAGO/.test(u)) continue;
     if(/VTO|VT0|VIO|VENC|PAGO/.test(u)){if(!fVto)fVto=fs[fs.length-1]}else if(!fEmi)fEmi=fs[0]}
-  const todas=lineas.flatMap(fechasDe);
+  const todas=lineas.filter(l=>!/CAE|INICIO|ACTIVIDAD|VTO|VT0|VIO|VENC|PAGO/.test(sinAcento(l).toUpperCase())).flatMap(fechasDe);
   if(!fEmi&&todas.length)fEmi=todas[0];
   d.fecha=fEmi||dia(0); fEmi?ok('fecha'):dudo('fecha');
   if(fVto){d.vence=fVto;ok('vence')}else{const x=new Date(d.fecha+'T00:00:00');x.setDate(x.getDate()+30);d.vence=x.toISOString().slice(0,10);dudo('vence')}
@@ -723,6 +985,9 @@ function interpretar(texto,confOCR){
     const cand=(i>=0?lineas.slice(i+1,i+4):lineas.filter(l=>montos(l).length&&!/raz[oó]n|domicilio|condici|cae|vto|venta:/i.test(l))).find(l=>/[a-záéíóúñ]{4,}/i.test(l)&&!prohib.test(sinAcento(l).toUpperCase())&&!/total|subtotal|iva|cuit|fecha|importe|neto|percep|reten|servicio\s*$|cantidad|precio/i.test(l));
     conc=(cand||'').replace(/^\d+\s+/,'').replace(/(\s+[\d.,]+)+\s*$/,'').replace(/-?\$?\s?\d{1,3}(?:[.,]\d{3})*[.,]\d{2}/g,'').replace(/\s{2,}/g,' ').trim()}
   d.concepto=conc; conc?(cf.concepto=Math.max(90,Math.min(94,base+4))):dudo('concepto');
+  if(/CONDICION DE VENTA\s*:?\s*CONTADO/.test(T)&&!fVto){d.vence=d.fecha;ok('vence')}
+  if(est) refinarConEstructura(d,cf,est,ok,dudo,T);
+  ajustarDoc(d);
   return {d,cf};
 }
 
@@ -758,7 +1023,9 @@ const PASOS=[['Preprocesando imagen','Enderezado y contraste'],['Clasificando do
 const CAMPOS=[['tipo','Documento'],['emisor','Emisor'],['cuit','CUIT'],['nro','Número'],['fecha','Fecha de emisión'],['concepto','Concepto'],['neto','Neto'],['iva','IVA'],['otros','Percepciones'],['vence','Vencimiento'],['total','Total']];
 let ocupado=false;
 
+let ejemploActual=null;
 async function leer(ej,img,nombre){
+  ejemploActual=ej;
   if(ocupado) return; ocupado=true;
   const d={...ej.d};
   $('#hilos').innerHTML='';
@@ -777,19 +1044,20 @@ async function leer(ej,img,nombre){
 
 function formulario(ej,d,img){
   const LG=d.tipo==='Liquidación de granos';
-  const et={neto:LG?'Importe bruto':'Neto gravado',iva:d.ivaL||'IVA',otros:LG?'Retenciones':(d.otrosL||'Percepciones'),vence:LG?'Fecha de pago':'Vencimiento'};
+  const et={neto:LG?'Subtotal sin IVA':'Neto gravado',iva:d.ivaL||'IVA',otros:LG?'Retenciones':(d.otrosL||'Percepciones'),vence:LG?'Fecha de pago':'Vencimiento'};
   const cuitOk=cuitValido(d.cuit), sumaOk=d.totalLeido==null||Math.abs(total(d)-d.totalLeido)<1;
   const val={tipo:d.tipo,emisor:d.emisor,cuit:d.cuit,nro:d.nro,fecha:d.fecha,concepto:d.concepto,neto:d.neto,iva:d.iva,otros:d.otros,vence:d.vence,total:plata2(total(d))};
   const vals=Object.values(ej.cf), prom=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length), dud=vals.filter(v=>v<90).length;
-  const dup=!!d.nro&&docs.some(x=>x.nro===d.nro);
+  const dup=esDuplicado(d);
   $('#estadoVisor').textContent=ej.real?`${Object.entries(ej.cf).filter(([k,v])=>k!=='total'&&v>=90).length} de ${CAMPOS.length-1} campos leídos con confianza`:`${CAMPOS.length} campos detectados`;
   $('#panel').innerHTML=`<div class="caja-cab"><h2>Datos extraídos</h2>${tipoHTML(d.tipo)}</div><div class="cuerpo">
     <div class="resumen-lectura"><div><b>${d.emisor||'Emisor no detectado'}</b><span class="chico">${dud?`${dud===1?'1 campo':dud+' campos'} con baja confianza. ${dud===1?'Revisalo':'Revisalos'} antes de archivar.`:'Lectura completa. Podés editar cualquier campo.'}</span></div><div class="conf-glob"><span class="chico">Confianza</span><strong class="num">${prom}%</strong></div></div>
     <table class="campos">${CAMPOS.map(([k,l])=>{
-      const c=ej.cf[k], lab=et[k]||l, tp=(k==='fecha'||k==='vence')?'date':(['neto','iva','otros'].includes(k)?'number':'text');
+      const c=ej.cf[k], lab=et[k]||l, tp=(k==='fecha'||k==='vence')?'date':'text', esImp=['neto','iva','otros'].includes(k);
       const f=k==='tipo'?`<select id="f-tipo">${Object.keys(TIPOS).map(t=>`<option ${t===d.tipo?'selected':''}>${t}</option>`).join('')}</select>`
         :k==='total'?`<input id="f-total" class="num" value="${val.total}" readonly aria-label="Total">`
-        :`<input id="f-${k}" class="${tp==='number'?'num':''}" type="${tp}" value="${String(val[k]??'').replace(/[&"<]/g,c=>({'&':'&amp;','"':'&quot;','<':'&lt;'}[c]))}" aria-label="${lab}">`;
+        :esImp?`<input id="f-${k}" class="num" type="text" inputmode="decimal" data-raw="${+val[k]||0}" value="${miles(+val[k]||0)}" aria-label="${lab}">`
+        :`<input id="f-${k}" type="${tp}" value="${String(val[k]??'').replace(/[&"<]/g,c=>({'&':'&amp;','"':'&quot;','<':'&lt;'}[c]))}" aria-label="${lab}">`;
       return `<tr data-k="${k}" class="${c&&c<90?'dudoso':''} ${k==='total'?'total':''}"><td class="lab">${lab}</td><td>${f}</td><td class="cf">${c?`<span class="meter" title="Confianza de lectura"><i style="--v:${c}%"></i>${c}%</span>`:''}</td></tr>`}).join('')}
     </table>
     <div class="controles">
@@ -798,11 +1066,17 @@ function formulario(ej,d,img){
       ${LG&&!ej.real?`<p>${CHECK}<span>Kilos por precio coincide con el importe liquidado</span></p>`:''}
       <p class="${dup?'mal':''}">${dup?ALERT:CHECK}<span>${dup?'Ya existe un comprobante con este número en Documentos':'Sin duplicados en Documentos'}</span></p>
     </div>
+    ${LG?conceptosHTML(d.conceptos):''}
+    ${d.rubros&&d.rubros.length?`<div class="rubros"><div class="rubros-cab"><h3>Detalle por rubro</h3><button class="btn-link" id="csvRub" type="button">Descargar rubros CSV</button></div>${rubrosHTML(d.rubros)}</div>`:''}
     ${ej.real?`<details class="texto-leido"><summary>Ver el texto leído${ej.fuente?' ('+ej.fuente.toLowerCase()+')':''}</summary><pre>${ej.texto.replace(/[<&]/g,c=>({'<':'&lt;','&':'&amp;'}[c]))}</pre></details>`:''}
     <div class="acciones">${ej.colaId&&cola.length>1?'<button class="btn btn-sec" id="volver">Volver a la lista</button>':''}<button class="btn btn-sec" id="descartar">Descartar</button><button class="btn btn-pri" id="archivar">Archivar comprobante</button></div></div>`;
-  ['neto','iva','otros'].forEach(k=>$('#f-'+k).oninput=()=>{$('#f-total').value=plata2((+$('#f-neto').value||0)+(+$('#f-iva').value||0)+(+$('#f-otros').value||0))});
+  const imp=k=>+$('#f-'+k).dataset.raw||0;
+  ['neto','iva','otros'].forEach(k=>{const el=$('#f-'+k);
+    el.oninput=()=>{el.dataset.raw=leerMiles(el.value);$('#f-total').value=plata(imp('neto')+imp('iva')+imp('otros'))};
+    el.onblur=()=>{el.value=miles(+el.dataset.raw||0)}});
   const enLote=ej.colaId&&cola.length>1, it=ej.colaId?cola.find(c=>c.id===ej.colaId):null;
   if($('#volver')) $('#volver').onclick=vistaLote;
+  if($('#csvRub')) $('#csvRub').onclick=()=>rubrosCSV(d);
   $('#descartar').onclick=()=>{toast('Comprobante descartado');if(enLote){it.estado='descartado';vistaLote()}else inicio()};
   $('#archivar').onclick=()=>archivar(it,enLote);
   if(ej.real) $('#estadoVisor').textContent=(ej.fuente?ej.fuente+'. ':'')+$('#estadoVisor').textContent;
@@ -835,7 +1109,8 @@ addEventListener('resize',dibujarHilos);
 function archivar(it,enLote){
   const tipo=$('#f-tipo').value;
   const d={tipo,nro:$('#f-nro').value,emisor:$('#f-emisor').value,cuit:$('#f-cuit').value,concepto:$('#f-concepto').value,fecha:$('#f-fecha').value,vence:$('#f-vence').value,
-    neto:+$('#f-neto').value||0,iva:+$('#f-iva').value||0,otros:+$('#f-otros').value||0};
+    neto:+$('#f-neto').dataset.raw||0,iva:+$('#f-iva').dataset.raw||0,otros:+$('#f-otros').dataset.raw||0};
+  if(!it&&ejemploActual) d.conceptos=ejemploActual.d.conceptos;
   const n=guardarDoc(d,it);
   toast(`Comprobante archivado. ${n.dir==='cobrar'?'Fecha de pago':'Vencimiento'}: ${fecha(n.vence)}`);
   if(it) it.estado='archivado';
@@ -888,7 +1163,24 @@ function pintarVenc(){
 }
 
 /* ===== RESUMEN ===== */
+function pintarConceptos(){
+  const liq=docs.filter(d=>d.tipo==='Liquidación de granos');
+  const ag={};
+  for(const d of liq)for(const c of d.conceptos||[]){const k=c.tipo+'|'+c.concepto.toUpperCase();
+    (ag[k]=ag[k]||{tipo:c.tipo,concepto:c.concepto,total:0,docs:[]}); ag[k].total+=c.importe; ag[k].docs.push({d,imp:c.importe})}
+  const filas=Object.values(ag).sort((a,b)=>a.tipo.localeCompare(b.tipo)||b.total-a.total);
+  const tot=filas.reduce((a,f)=>a+f.total,0), max=Math.max(1,...filas.map(f=>f.total));
+  const bruto=liq.reduce((a,d)=>a+d.neto+d.iva,0);
+  $('#concNota').textContent=`${liq.length} liquidaciones, ${plata(tot)} descontados${bruto?` (${Math.round(tot/bruto*100)}% del bruto con IVA)`:''}`;
+  $('#porConcepto').innerHTML=filas.length?`<table class="tabla-conc"><thead><tr><th>Concepto</th><th>Tipo</th><th></th><th class="der">Liquidaciones</th><th class="der">Total</th><th></th></tr></thead><tbody>
+    ${filas.map((f,i)=>`<tr class="fc" data-fc="${i}" tabindex="0"><td><b>${esc(f.concepto)}</b></td><td class="chico">${f.tipo}</td><td class="barra-c"><i style="width:${f.total/max*100}%;background:${f.tipo==='Retención'?'var(--azul)':'var(--ambar)'}"></i></td><td class="der num">${f.docs.length}</td><td class="der num"><b>${plata(f.total)}</b></td><td class="der"><span class="abre">›</span></td></tr>
+      <tr class="det-c" data-det="${i}" hidden><td colspan="6"><table><tbody>${f.docs.map(x=>`<tr data-id="${x.d.id}"><td>${esc(x.d.emisor)}</td><td class="chico">${esc(x.d.nro)}, ${fecha(x.d.fecha)}</td><td class="der num">${plata2(x.imp)}</td></tr>`).join('')}</tbody></table></td></tr>`).join('')}
+    </tbody><tfoot><tr><td colspan="4">Total</td><td class="der num">${plata(tot)}</td><td></td></tr></tfoot></table>`
+    :'<p class="vacio">Todavía no hay liquidaciones con deducciones o retenciones cargadas.</p>';
+  $$('#porConcepto .fc').forEach(tr=>{const t=()=>{const det=$(`#porConcepto [data-det="${tr.dataset.fc}"]`);det.hidden=!det.hidden;tr.classList.toggle('abierta',!det.hidden)};tr.onclick=e=>{e.stopPropagation();t()};tr.onkeydown=e=>{if(e.key==='Enter')t()}});
+}
 function pintarResumen(){
+  pintarConceptos();
   const q=docs.filter(d=>d.estado==='pend'&&faltan(d.vence)<=15);
   const cob=q.filter(d=>d.dir==='cobrar').reduce((s,d)=>s+total(d),0), pag=q.filter(d=>d.dir==='pagar').reduce((s,d)=>s+total(d),0);
   $('#frase').innerHTML=`Vas a cobrar <span class="c">${millones(cob)}</span> por liquidaciones y pagar <span class="p">${millones(pag)}</span> a proveedores.`;
@@ -904,7 +1196,7 @@ function pintarResumen(){
   const al=docs.filter(d=>d.estado==='pend'&&faltan(d.vence)<=3).sort((a,b)=>a.vence.localeCompare(b.vence));
   $('#alertas').innerHTML=al.map(d=>`<div class="alerta" data-id="${d.id}">${estado(d)}<div><b>${d.emisor}</b><div class="chico">${faltan(d.vence)<0?`Venció hace ${-faltan(d.vence)} días`:faltan(d.vence)===0?'Vence hoy':`${d.dir==='cobrar'?'Cobro':'Vence'} en ${faltan(d.vence)} días`}</div></div><b class="num">${plata(total(d))}</b></div>`).join('')||'<p class="vacio">No hay vencimientos urgentes.</p>';
 }
-function pintar(){ $('#nDocs').textContent=docs.length; pintarDocs(); pintarVenc(); pintarResumen(); }
+function pintar(){ guardarDocs(); $('#nDocs').textContent=docs.length; pintarDocs(); pintarVenc(); pintarResumen(); }
 
 /* ===== detalle ===== */
 document.addEventListener('click',e=>{const r=e.target.closest('[data-id]');if(r) abrir(docs.find(d=>d.id==r.dataset.id))});
@@ -915,22 +1207,34 @@ function abrir(d){
   $('#detalle').innerHTML=`<div class="dc"><div>${tipoHTML(d.tipo)}<h2>${d.emisor}</h2><div class="chico">${d.nro}</div></div><button class="cerrar" id="cerrar" aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.8"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
    <div class="cuerpo"><dl class="dl"><dt>Estado</dt><dd>${estado(d)}</dd><dt>CUIT</dt><dd>${d.cuit}</dd><dt>Emisión</dt><dd>${fecha(d.fecha)}</dd>
      <dt>${LG?'Fecha de pago':'Vencimiento'}</dt><dd>${fecha(d.vence)}</dd><dt>Concepto</dt><dd>${d.concepto}</dd>
-     <dt>${LG?'Importe bruto':'Neto'}</dt><dd class="num">${plata2(d.neto)}</dd><dt>IVA</dt><dd class="num">${plata2(d.iva)}</dd>
+     <dt>${LG?'Subtotal sin IVA':'Neto'}</dt><dd class="num">${plata2(d.neto)}</dd><dt>IVA</dt><dd class="num">${plata2(d.iva)}</dd>
      <dt>${LG?'Retenciones':'Percepciones'}</dt><dd class="num">${plata2(d.otros)}</dd><dt>Total</dt><dd class="tot num">${plata2(total(d))}</dd></dl>
+    ${LG?conceptosHTML(d.conceptos):''}
+    ${d.rubros&&d.rubros.length?`<div class="rubros"><div class="rubros-cab"><h3>Detalle por rubro</h3><button class="btn-link" id="csvRubDet" type="button">Descargar CSV</button></div>${rubrosHTML(d.rubros,0)}</div>`:''}
     <div class="historial"><h3>Historial</h3>${hist.map((h,i)=>`<div class="hist ${i===hist.length-1?'ult':''}"><i></i><div><b>${h[1]}</b><div class="chico">${h[0]}</div></div></div>`).join('')}</div>
     <div class="acciones" style="justify-content:flex-start">${d.estado==='pend'?`<button class="btn btn-pri" id="marcar">Marcar como ${d.dir==='cobrar'?'cobrado':'pagado'}</button>`:''}<button class="btn btn-sec" id="borrar">Eliminar</button></div></div>`;
   $('#detalle').classList.add('on');$('#detalle').setAttribute('aria-hidden','false');$('#velo').classList.add('on');
   $('#cerrar').focus(); $('#cerrar').onclick=cerrar;
+  if($('#csvRubDet')) $('#csvRubDet').onclick=()=>rubrosCSV(d);
   const mc=$('#marcar'); if(mc) mc.onclick=()=>{d.estado='ok';pintar();abrir(d);toast(d.dir==='cobrar'?'Marcado como cobrado':'Marcado como pagado')};
   $('#borrar').onclick=()=>{docs=docs.filter(x=>x.id!==d.id);cerrar();pintar();toast('Comprobante eliminado')};
 }
 function cerrar(){$('#detalle').classList.remove('on');$('#detalle').setAttribute('aria-hidden','true');$('#velo').classList.remove('on')}
 $('#velo').onclick=cerrar; addEventListener('keydown',e=>{if(e.key==='Escape')cerrar()});
 
+/* ===== restablecer ===== */
+$('#reset').onclick=()=>{
+  const b=$('#reset');
+  if(!b.dataset.conf){b.dataset.conf='1';b.textContent='Confirmar: borrar lo cargado';b.classList.add('peligro');setTimeout(()=>{if(b.dataset.conf){delete b.dataset.conf;b.textContent='Restablecer ejemplo';b.classList.remove('peligro')}},4000);return}
+  delete b.dataset.conf;b.textContent='Restablecer ejemplo';b.classList.remove('peligro');
+  docs=JSON.parse(JSON.stringify(DOCS_EJEMPLO));recien=null;pintar();toast('Se restablecieron los documentos de ejemplo');
+};
+
 /* ===== CSV ===== */
+const numCSV=n=>n==null||n===''?'':String(Math.round(n*1e8)/1e8).replace('.',',');
 $('#csv').onclick=()=>{
   const cab=['Tipo','Numero','Emisor','CUIT','Concepto','Fecha','Vencimiento','Neto','IVA','Otros','Total','Estado'];
-  const filas=docs.map(d=>[d.tipo,d.nro,d.emisor,d.cuit,d.concepto,d.fecha,d.vence,d.neto,d.iva,d.otros,total(d),d.estado==='ok'?'Cerrado':'Pendiente']);
+  const filas=docs.map(d=>[d.tipo,d.nro,d.emisor,d.cuit,d.concepto,fecha(d.fecha),fecha(d.vence),numCSV(d.neto),numCSV(d.iva),numCSV(d.otros),numCSV(total(d)),d.estado==='ok'?'Cerrado':'Pendiente']);
   const csv=[cab,...filas].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='documentos_agrodocs.csv';a.click();
   toast('CSV exportado');
