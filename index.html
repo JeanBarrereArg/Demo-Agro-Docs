@@ -729,7 +729,7 @@ function vistaLote(){
   enRevision=null; $('#hilos').innerHTML='';
   const hechos=cola.filter(c=>!['espera','leyendo'].includes(c.estado)).length;
   const vistos=new Set();
-  cola.forEach(c=>{if(c.estado!=='listo'||!c.valido)return;const k=normNro(c.d.nro)+'|'+(c.d.cuit||'').replace(/\D/g,'');if(esDuplicado(c.d)||(c.d.nro&&vistos.has(k))){c.valido=false;c.repetido=true}else vistos.add(k)});
+  cola.forEach(c=>{if(c.estado!=='listo')return;const k=normNro(c.d.nro)+'|'+(c.d.cuit||'').replace(/\D/g,'');c.repetido=!!(c.d.nro&&(esDuplicado(c.d)||vistos.has(k)));if(c.repetido)c.valido=false;else if(c.d.nro)vistos.add(k)});
   const validos=cola.filter(c=>c.estado==='listo'&&c.valido);
   const pend=cola.filter(c=>c.estado==='listo');
   const ultimo=[...cola].reverse().find(c=>c.vista);
