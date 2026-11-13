@@ -78,6 +78,9 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
 .vm-lienzo.zoom{align-items:flex-start;justify-content:flex-start}
 .vm-lienzo.zoom img{max-width:none;max-height:none;width:auto;cursor:zoom-out;margin:auto}
 @media (max-width:700px){.vm-barra{flex-wrap:wrap}.vm-bts{width:100%;justify-content:flex-end}}
+.vacio-docs{padding:48px 20px;text-align:center}
+.vacio-docs b{display:block;font-size:16px;margin-bottom:4px}
+.vacio-docs span{display:block;color:var(--gris);margin-bottom:16px}
 .btn.peligro{border-color:var(--rojo);color:var(--rojo);background:var(--rojo-claro)}
 
 /* ---------- estados ---------- */
@@ -409,7 +412,7 @@ tr.nuevo td{animation:nuevo 2.6s ease}
   <section class="vista" id="v-docs">
     <div class="cab">
       <div><h1>Documentos</h1><p class="bajada">Repositorio único de facturas, notas de crédito y liquidaciones de granos de la campaña.</p></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-sec" id="reset" title="Borra lo cargado y vuelve a los documentos de ejemplo">Restablecer ejemplo</button><button class="btn btn-sec" id="csv"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12"/></svg>Exportar CSV</button></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-sec" id="vaciar" title="Borra todos los documentos y archivos, también los de ejemplo, para empezar de cero">Vaciar todo</button><button class="btn btn-sec" id="reset" title="Borra lo cargado y vuelve a los documentos de ejemplo">Restablecer ejemplo</button><button class="btn btn-sec" id="csv"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12"/></svg>Exportar CSV</button></div>
     </div>
     <div class="caja">
       <div class="filtros"><input class="buscar" id="q" type="search" placeholder="Buscar por proveedor, CUIT, concepto o número" aria-label="Buscar"><div class="seg" id="seg"></div></div>
@@ -1190,7 +1193,8 @@ function pintarDocs(){
     <td style="max-width:250px">${d.concepto}${d.foto?`<div class="chico">${d.origen||'Cargado por foto'}${d.adjunto?', con archivo':''}</div>`:''}</td>
     <td class="num">${fecha(d.fecha)}</td><td class="num">${fecha(d.vence)}</td>
     <td class="der num">${plata(d.iva+d.otros)}</td><td class="der num"><b>${plata(total(d))}</b></td><td>${estado(d)}</td></tr>`).join('')
-    ||`<tr><td colspan="8" style="padding:36px;text-align:center;color:var(--gris)">No hay comprobantes que coincidan con la búsqueda. Probá con el CUIT o parte del nombre.</td></tr>`;
+    ||(docs.length?`<tr><td colspan="8" style="padding:36px;text-align:center;color:var(--gris)">No hay comprobantes que coincidan con la búsqueda. Probá con el CUIT o parte del nombre.</td></tr>`
+      :`<tr><td colspan="8" class="vacio-docs"><b>Todavía no hay documentos</b><span>Subí fotos o PDF desde Cargar comprobante y van a aparecer acá.</span><button class="btn btn-pri" type="button" onclick="ir('carga')">Cargar comprobante</button></td></tr>`);
   $('#pieTabla').innerHTML=`<span>${l.length} de ${docs.length} documentos</span><span>Total listado: <b class="num">${plata(l.reduce((s,d)=>s+total(d),0))}</b></span>`;
 }
 $('#q').oninput=pintarDocs;
@@ -1243,7 +1247,7 @@ function pintarResumen(){
   const q=docs.filter(d=>d.estado==='pend'&&faltan(d.vence)<=15);
   const cob=q.filter(d=>d.dir==='cobrar').reduce((s,d)=>s+total(d),0), pag=q.filter(d=>d.dir==='pagar').reduce((s,d)=>s+total(d),0);
   $('#frase').innerHTML=`Vas a cobrar <span class="c">${millones(cob)}</span> por liquidaciones y pagar <span class="p">${millones(pag)}</span> a proveedores.`;
-  $('#balanza').innerHTML=`<div class="bc" style="flex-grow:${cob||1}"></div><div class="bp" style="flex-grow:${pag||1}"></div>`;
+  $('#balanza').innerHTML=cob||pag?`<div class="bc" style="flex-grow:${cob}"></div><div class="bp" style="flex-grow:${pag}"></div>`:'<div style="flex-grow:1;background:var(--linea)"></div>';
   $('#balRef').innerHTML=`<span>Cobros <b class="num">${plata(cob)}</b></span><span>Pagos <b class="num">${plata(pag)}</b></span>`;
   $('#saldo').textContent=plata(cob-pag); $('#saldo').style.color=cob-pag>=0?'var(--verde)':'var(--rojo)';
   const sem=[['Vencido',d=>faltan(d.vence)<0],['Semana 1',d=>faltan(d.vence)>=0&&faltan(d.vence)<=7],['Semana 2',d=>faltan(d.vence)>7&&faltan(d.vence)<=15]];
@@ -1251,7 +1255,7 @@ function pintarResumen(){
   const n=Object.keys(TIPOS).map(t=>[t,docs.filter(d=>d.tipo===t).length]);
   $('#totDocs').textContent=`${docs.length} documentos`;
   $('#mix').innerHTML=n.map(([t,c])=>`<div style="--tc:${TIPOS[t].c};flex-grow:${c}"></div>`).join('');
-  $('#ref').innerHTML=n.map(([t,c])=>`<div style="--tc:${TIPOS[t].c}"><i></i><span>${t}</span><b class="num">${c}</b><em class="num">${Math.round(c/docs.length*100)}%</em></div>`).join('');
+  $('#ref').innerHTML=n.map(([t,c])=>`<div style="--tc:${TIPOS[t].c}"><i></i><span>${t}</span><b class="num">${c}</b><em class="num">${(docs.length?Math.round(c/docs.length*100):0)}%</em></div>`).join('');
   const al=docs.filter(d=>d.estado==='pend'&&faltan(d.vence)<=3).sort((a,b)=>a.vence.localeCompare(b.vence));
   $('#alertas').innerHTML=al.map(d=>`<div class="alerta" data-id="${d.id}">${estado(d)}<div><b>${d.emisor}</b><div class="chico">${faltan(d.vence)<0?`Venció hace ${-faltan(d.vence)} días`:faltan(d.vence)===0?'Vence hoy':`${d.dir==='cobrar'?'Cobro':'Vence'} en ${faltan(d.vence)} días`}</div></div><b class="num">${plata(total(d))}</b></div>`).join('')||'<p class="vacio">No hay vencimientos urgentes.</p>';
 }
@@ -1289,13 +1293,20 @@ function abrir(d){
 function cerrar(){$('#detalle').classList.remove('on');$('#detalle').setAttribute('aria-hidden','true');$('#velo').classList.remove('on')}
 $('#velo').onclick=cerrar; addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#visorModal').classList.contains('on'))cerrarVisor();else cerrar()}});
 
-/* ===== restablecer ===== */
-$('#reset').onclick=()=>{
-  const b=$('#reset');
-  if(!b.dataset.conf){b.dataset.conf='1';b.textContent='Confirmar: borrar lo cargado';b.classList.add('peligro');setTimeout(()=>{if(b.dataset.conf){delete b.dataset.conf;b.textContent='Restablecer ejemplo';b.classList.remove('peligro')}},4000);return}
-  delete b.dataset.conf;b.textContent='Restablecer ejemplo';b.classList.remove('peligro');
-  docs=JSON.parse(JSON.stringify(DOCS_EJEMPLO));recien=null;adjClear();pintar();toast('Se restablecieron los documentos de ejemplo');
-};
+/* ===== vaciar / restablecer ===== */
+function confirmarEnBoton(b,textoConf,accion){
+  const orig=b.dataset.orig||(b.dataset.orig=b.textContent);
+  if(!b.dataset.conf){b.dataset.conf='1';b.textContent=textoConf;b.classList.add('peligro');
+    clearTimeout(b._t);b._t=setTimeout(()=>{delete b.dataset.conf;b.textContent=orig;b.classList.remove('peligro')},4000);return}
+  clearTimeout(b._t);delete b.dataset.conf;b.textContent=orig;b.classList.remove('peligro');accion();
+}
+$('#reset').onclick=()=>confirmarEnBoton($('#reset'),'Confirmar: volver al ejemplo',()=>{
+  docs=JSON.parse(JSON.stringify(DOCS_EJEMPLO));recien=null;filtro='Todos';adjClear();pintar();toast('Se restablecieron los documentos de ejemplo');
+});
+$('#vaciar').onclick=()=>confirmarEnBoton($('#vaciar'),'Confirmar: borrar todo',()=>{
+  const n=docs.length;docs=[];recien=null;filtro='Todos';$('#q').value='';adjClear();pintar();
+  toast(`Se borraron ${n===1?'1 documento':n+' documentos'}. Lo que subas desde ahora es lo único que va a quedar guardado`);
+});
 
 /* ===== CSV ===== */
 const numCSV=n=>n==null||n===''?'':String(Math.round(n*1e8)/1e8).replace('.',',');
