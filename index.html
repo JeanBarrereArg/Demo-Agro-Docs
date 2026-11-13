@@ -741,12 +741,14 @@ function vistaLote(){
     <p class="chico" style="margin-top:12px">${pend.length?`Los marcados como <b>Validado</b> tienen CUIT válido, totales que cierran y todos los campos con buena confianza. El resto conviene revisarlo uno por uno.`:hechos===cola.length?'Lote terminado.':''}</p>
     <div class="acciones">
       <label class="btn btn-sec" tabindex="0">Agregar archivos<input type="file" accept="application/pdf,.pdf,image/*,.heic,.heif,.webp" multiple hidden id="mas"></label>
+      ${hechos===cola.length?`<button class="btn btn-sec" id="terminar" title="${pend.length?'Los que quedaron sin revisar no se archivan':'Volver a la pantalla de carga'}">${pend.length?`Terminar sin archivar ${pend.length===1?'1 pendiente':pend.length+' pendientes'}`:'Terminar lote'}</button>`:''}
       ${validos.length?`<button class="btn btn-pri" id="archValidos">Archivar validados (${validos.length})</button>`:hechos===cola.length&&!pend.length?'<button class="btn btn-pri" id="verDocs">Ver documentos</button>':''}
     </div></div>`;
   $$('[data-rev]').forEach(li=>{li.onclick=()=>revisar(+li.dataset.rev);li.onkeydown=e=>{if(e.key==='Enter')revisar(+li.dataset.rev)}});
   $('#mas').onchange=e=>{const fs=[...e.target.files];if(fs.length)encolar(fs);e.target.value=''};
   const av=$('#archValidos'); if(av) av.onclick=()=>{let n=0,rep=0;validos.forEach(c=>{if(esDuplicado(c.d)){c.valido=false;rep++;return}guardarDoc(c.d,c);c.estado='archivado';n++});toast(`${n===1?'1 comprobante archivado':n+' comprobantes archivados'}${rep?`. ${rep===1?'1 quedó':rep+' quedaron'} para revisar por estar repetido${rep===1?'':'s'}`:''}`);pintar();vistaLote()};
-  const vd=$('#verDocs'); if(vd) vd.onclick=()=>{inicio();ir('docs')};
+  const vd=$('#verDocs'); if(vd) vd.onclick=()=>{cola=[];inicio();ir('docs')};
+  const tm=$('#terminar'); if(tm) tm.onclick=()=>{const p=cola.filter(c=>c.estado==='listo').length;cola=[];inicio();toast(p?`Lote terminado. ${p===1?'1 comprobante quedó':p+' comprobantes quedaron'} sin archivar`:'Lote terminado')};
 }
 function revisar(id){
   const it=cola.find(c=>c.id===id); if(!it) return; enRevision=id;
@@ -1149,7 +1151,7 @@ async function completar(img){
     const mk=img?null:$(`#doc .mk[data-k="${k}"]`);
     if(mk) mk.classList.add('on');
     await espera(mk?140:50);
-    $(`.campos tr[data-k="${k}"]`).classList.add('in');
+    const fila=$(`.campos tr[data-k="${k}"]`); if(!fila) return; fila.classList.add('in');
     if(mk) dibujarHilos();
   }
   dibujarHilos();
@@ -1294,6 +1296,7 @@ function cerrar(){$('#detalle').classList.remove('on');$('#detalle').setAttribut
 $('#velo').onclick=cerrar; addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#visorModal').classList.contains('on'))cerrarVisor();else cerrar()}});
 
 /* ===== vaciar / restablecer ===== */
+function limpiarLote(){if(procesando)cola.forEach(c=>{if(c.estado==='espera')c.estado='descartado'});cola=cola.filter(c=>c.estado==='leyendo');enRevision=null;if(!cola.length)inicio()}
 function confirmarEnBoton(b,textoConf,accion){
   const orig=b.dataset.orig||(b.dataset.orig=b.textContent);
   if(!b.dataset.conf){b.dataset.conf='1';b.textContent=textoConf;b.classList.add('peligro');
@@ -1301,10 +1304,10 @@ function confirmarEnBoton(b,textoConf,accion){
   clearTimeout(b._t);delete b.dataset.conf;b.textContent=orig;b.classList.remove('peligro');accion();
 }
 $('#reset').onclick=()=>confirmarEnBoton($('#reset'),'Confirmar: volver al ejemplo',()=>{
-  docs=JSON.parse(JSON.stringify(DOCS_EJEMPLO));recien=null;filtro='Todos';adjClear();pintar();toast('Se restablecieron los documentos de ejemplo');
+  docs=JSON.parse(JSON.stringify(DOCS_EJEMPLO));recien=null;filtro='Todos';adjClear();limpiarLote();pintar();toast('Se restablecieron los documentos de ejemplo');
 });
 $('#vaciar').onclick=()=>confirmarEnBoton($('#vaciar'),'Confirmar: borrar todo',()=>{
-  const n=docs.length;docs=[];recien=null;filtro='Todos';$('#q').value='';adjClear();pintar();
+  const n=docs.length;docs=[];recien=null;filtro='Todos';$('#q').value='';adjClear();limpiarLote();pintar();
   toast(`Se borraron ${n===1?'1 documento':n+' documentos'}. Lo que subas desde ahora es lo único que va a quedar guardado`);
 });
 
