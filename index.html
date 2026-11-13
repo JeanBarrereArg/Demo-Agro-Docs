@@ -58,6 +58,26 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
 .btn-sec{background:var(--sup);border:1px solid var(--linea-2)}
 .btn-sec:hover{border-color:var(--gris-2);background:var(--sup-2)}
 .btn svg{width:16px;height:16px}
+.doc-wrap img{cursor:zoom-in}
+.adj{display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--linea)}
+.adj-mini{width:84px;height:108px;border:1px solid var(--linea);border-radius:4px;background:var(--sup-2);display:grid;place-items:center;overflow:hidden;cursor:zoom-in}
+.adj-mini img{width:100%;height:100%;object-fit:cover;object-position:top}
+.adj-info b{display:block;font-size:14px;word-break:break-all}
+.adj-bts{display:flex;gap:16px;margin-top:6px}
+.btn-link:disabled{color:var(--gris-2);cursor:not-allowed;text-decoration:none}
+.adj-no{padding:12px 0;border-bottom:1px solid var(--linea)}
+.visor-modal{position:fixed;inset:0;z-index:70;background:rgba(18,24,20,.88);display:none;flex-direction:column}
+.visor-modal.on{display:flex}
+.vm-barra{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;background:#fff;border-bottom:1px solid var(--linea)}
+.vm-barra b{display:block;font-size:14px;word-break:break-all}
+.vm-bts{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-vm{height:34px;padding:0 12px;font-size:13px}
+.vm-x{width:36px;height:36px}
+.vm-lienzo{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:20px}
+.vm-lienzo img{max-width:100%;max-height:100%;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.4);cursor:zoom-in}
+.vm-lienzo.zoom{align-items:flex-start;justify-content:flex-start}
+.vm-lienzo.zoom img{max-width:none;max-height:none;width:auto;cursor:zoom-out;margin:auto}
+@media (max-width:700px){.vm-barra{flex-wrap:wrap}.vm-bts{width:100%;justify-content:flex-end}}
 .btn.peligro{border-color:var(--rojo);color:var(--rojo);background:var(--rojo-claro)}
 
 /* ---------- estados ---------- */
@@ -428,6 +448,7 @@ tr.nuevo td{animation:nuevo 2.6s ease}
 
 <div class="velo" id="velo"></div>
 <aside class="detalle" id="detalle" aria-hidden="true"></aside>
+<div class="visor-modal" id="visorModal" aria-hidden="true" role="dialog" aria-label="Documento"></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -598,6 +619,40 @@ async function leerImagen(file,tipo,prog){
   return {vista,texto:r.texto,conf:r.conf,fuente:tipo==='heic'?'Foto HEIC, leída con OCR':'Imagen, leída con OCR'};
 }
 
+/* ----- archivos adjuntos guardados en el navegador (IndexedDB) ----- */
+const ADJ_DB='agrodocs', ADJ_ST='adjuntos';
+let _db=null;
+function adjDB(){return _db||(_db=new Promise((ok,mal)=>{const r=indexedDB.open(ADJ_DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(ADJ_ST);r.onsuccess=()=>ok(r.result);r.onerror=()=>{_db=null;mal(r.error)}}))}
+async function adjTx(modo,fn){const db=await adjDB();return new Promise((ok,mal)=>{const tx=db.transaction(ADJ_ST,modo);const st=tx.objectStore(ADJ_ST);const r=fn(st);tx.oncomplete=()=>ok(r&&r.result);tx.onerror=()=>mal(tx.error)})}
+const adjPut=(id,v)=>adjTx('readwrite',st=>st.put(v,id));
+const adjGet=id=>adjTx('readonly',st=>st.get(id));
+const adjDel=id=>adjTx('readwrite',st=>st.delete(id)).catch(()=>{});
+const adjClear=()=>adjTx('readwrite',st=>st.clear()).catch(()=>{});
+function aJPEG(src,max=1600,q=.82){return new Promise(res=>{if(!src)return res(null);const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q))};im.onerror=()=>res(src);im.src=src})}
+function abrirOriginal(blob,nombre){
+  if(!blob){toast('El archivo original no está disponible en este navegador');return}
+  const url=URL.createObjectURL(blob);
+  const visible=/pdf|jpeg|png|webp|gif|bmp/.test(blob.type||'');
+  if(visible){const w=window.open(url,'_blank');if(!w){const a=document.createElement('a');a.href=url;a.download=nombre||'documento';a.click()}}
+  else{const a=document.createElement('a');a.href=url;a.download=nombre||'documento';a.click()}
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+let zoomOn=false;
+function abrirVisor(src,nombre,original,extra=''){
+  if(!src) return;
+  zoomOn=false;
+  $('#visorModal').innerHTML=`<div class="vm-barra"><div><b>${esc(nombre||'Documento')}</b>${extra?`<span class="chico">${esc(extra)}</span>`:''}</div>
+    <div class="vm-bts">${original?`<button class="btn btn-sec btn-vm" id="vmOrig">Abrir original</button>`:''}<button class="btn btn-sec btn-vm" id="vmZoom">Ampliar</button><button class="cerrar vm-x" id="vmCerrar" aria-label="Cerrar"><svg width="18" height="18" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.8"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div></div>
+    <div class="vm-lienzo" id="vmLienzo"><img src="${src}" alt="${esc(nombre||'Documento')}" id="vmImg"></div>`;
+  $('#visorModal').classList.add('on'); $('#visorModal').setAttribute('aria-hidden','false');
+  const z=()=>{zoomOn=!zoomOn;$('#vmLienzo').classList.toggle('zoom',zoomOn);$('#vmZoom').textContent=zoomOn?'Ajustar a pantalla':'Ampliar'};
+  $('#vmZoom').onclick=z; $('#vmImg').onclick=z;
+  $('#vmCerrar').onclick=cerrarVisor; $('#vmCerrar').focus();
+  if($('#vmOrig')) $('#vmOrig').onclick=()=>abrirOriginal(original,nombre);
+}
+function cerrarVisor(){$('#visorModal').classList.remove('on');$('#visorModal').setAttribute('aria-hidden','true')}
+document.addEventListener('click',e=>{const im=e.target.closest('#doc img, #lienzo .doc-wrap img');if(!im)return;const it=cola.find(c=>c.vista===im.getAttribute('src'));abrirVisor(im.getAttribute('src'),it?it.nombre:'Documento',it&&it.original,it&&it.paginas>1?`Página 1 de ${it.paginas}`:'')});
+
 /* ----- cola de lectura ----- */
 let cola=[], procesando=false, enRevision=null, idCola=0;
 const MAX_MB=20;
@@ -628,7 +683,7 @@ async function procesarCola(){
       it.valido=cuitValido(d.cuit)&&(d.totalLeido==null||Math.abs(total(d)-d.totalLeido)<1)&&Object.entries(cf).every(([k,v])=>v>=90)&&!esDuplicado(d);
       it.estado='listo';
     }catch(e){it.estado='error';it.error=e.message==='sin-motor'||e.message==='sin-libreria'?'No cargó el motor de lectura. Revisá la conexión a internet.':it.tipo==='pdf'?'No se pudo abrir el PDF. Puede estar protegido con contraseña o dañado.':'No se pudo leer la imagen. Probá con una más nítida.'}
-    it.file=null; refrescar(it);
+    it.original=it.file||null; it.file=null; refrescar(it);
   }
   procesando=false;
 }
@@ -702,6 +757,10 @@ function guardarDoc(d,it){
   ajustarDoc(d);
   const n={id:Math.max(0,...docs.map(x=>x.id))+1,foto:true,origen:it&&it.tipo==='pdf'?'Cargado desde PDF':'Cargado por foto',tipo:d.tipo,nro:d.nro,emisor:d.emisor,cuit:d.cuit,concepto:d.concepto,fecha:d.fecha,vence:d.vence,
     neto:+d.neto||0,iva:+d.iva||0,otros:+d.otros||0,dir:d.tipo==='Liquidación de granos'?'cobrar':'pagar',estado:'pend',rubros:d.rubros||(it&&it.d&&it.d.rubros)||null,conceptos:d.conceptos||(it&&it.d&&it.d.conceptos)||null};
+  if(it&&(it.original||it.vista)){
+    n.adjunto={nombre:it.nombre,tipo:it.tipo,paginas:it.paginas||1};
+    aJPEG(it.vista).then(v=>adjPut(n.id,{original:it.original||null,vista:v})).catch(()=>{n.adjunto.error=true;guardarDocs()});
+  }
   docs.push(n); recien=n.id; return n;
 }
 
@@ -1128,7 +1187,7 @@ function pintarDocs(){
   $('#tabla').innerHTML=l.map(d=>`<tr data-id="${d.id}" class="${d.id===recien?'nuevo':''}">
     <td>${tipoHTML(d.tipo)}<div class="chico" style="padding-left:11px">${d.nro}</div></td>
     <td><div class="prov">${d.emisor}</div><div class="chico">CUIT ${d.cuit}</div></td>
-    <td style="max-width:250px">${d.concepto}${d.foto?`<div class="chico">${d.origen||'Cargado por foto'}</div>`:''}</td>
+    <td style="max-width:250px">${d.concepto}${d.foto?`<div class="chico">${d.origen||'Cargado por foto'}${d.adjunto?', con archivo':''}</div>`:''}</td>
     <td class="num">${fecha(d.fecha)}</td><td class="num">${fecha(d.vence)}</td>
     <td class="der num">${plata(d.iva+d.otros)}</td><td class="der num"><b>${plata(total(d))}</b></td><td>${estado(d)}</td></tr>`).join('')
     ||`<tr><td colspan="8" style="padding:36px;text-align:center;color:var(--gris)">No hay comprobantes que coincidan con la búsqueda. Probá con el CUIT o parte del nombre.</td></tr>`;
@@ -1205,7 +1264,8 @@ function abrir(d){
   const hist=[[fecha(d.fecha),'Comprobante emitido'],[fecha(d.foto?dia(0):d.fecha),d.foto?(d.origen||'Cargado por foto')+' y validado':'Incorporado a Documentos']];
   if(d.estado==='ok') hist.push([fecha(dia(0)),d.dir==='cobrar'?'Marcado como cobrado':'Marcado como pagado']);
   $('#detalle').innerHTML=`<div class="dc"><div>${tipoHTML(d.tipo)}<h2>${d.emisor}</h2><div class="chico">${d.nro}</div></div><button class="cerrar" id="cerrar" aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.8"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-   <div class="cuerpo"><dl class="dl"><dt>Estado</dt><dd>${estado(d)}</dd><dt>CUIT</dt><dd>${d.cuit}</dd><dt>Emisión</dt><dd>${fecha(d.fecha)}</dd>
+   <div class="cuerpo">${d.adjunto?`<div class="adj"><button class="adj-mini" id="adjMini" aria-label="Ver documento"><span class="chico">Cargando…</span></button><div class="adj-info"><b>${esc(d.adjunto.nombre)}</b><span class="chico">${d.adjunto.tipo==='pdf'?'PDF':'Imagen'}${d.adjunto.paginas>1?`, ${d.adjunto.paginas} páginas`:''}</span><div class="adj-bts"><button class="btn-link" id="verDoc" type="button">Ver documento</button><button class="btn-link" id="abrirOrig" type="button">Abrir original</button></div></div></div>`:`<p class="chico adj-no">${d.foto?'El archivo de este comprobante no está disponible en este navegador.':'Comprobante de ejemplo, sin archivo adjunto.'}</p>`}
+    <dl class="dl"><dt>Estado</dt><dd>${estado(d)}</dd><dt>CUIT</dt><dd>${d.cuit}</dd><dt>Emisión</dt><dd>${fecha(d.fecha)}</dd>
      <dt>${LG?'Fecha de pago':'Vencimiento'}</dt><dd>${fecha(d.vence)}</dd><dt>Concepto</dt><dd>${d.concepto}</dd>
      <dt>${LG?'Subtotal sin IVA':'Neto'}</dt><dd class="num">${plata2(d.neto)}</dd><dt>IVA</dt><dd class="num">${plata2(d.iva)}</dd>
      <dt>${LG?'Retenciones':'Percepciones'}</dt><dd class="num">${plata2(d.otros)}</dd><dt>Total</dt><dd class="tot num">${plata2(total(d))}</dd></dl>
@@ -1217,17 +1277,24 @@ function abrir(d){
   $('#cerrar').focus(); $('#cerrar').onclick=cerrar;
   if($('#csvRubDet')) $('#csvRubDet').onclick=()=>rubrosCSV(d);
   const mc=$('#marcar'); if(mc) mc.onclick=()=>{d.estado='ok';pintar();abrir(d);toast(d.dir==='cobrar'?'Marcado como cobrado':'Marcado como pagado')};
-  $('#borrar').onclick=()=>{docs=docs.filter(x=>x.id!==d.id);cerrar();pintar();toast('Comprobante eliminado')};
+  $('#borrar').onclick=()=>{docs=docs.filter(x=>x.id!==d.id);adjDel(d.id);cerrar();pintar();toast('Comprobante eliminado')};
+  if(d.adjunto) adjGet(d.id).then(a=>{
+    const mini=$('#adjMini'); if(!mini) return;
+    if(!a||!a.vista){mini.innerHTML='<span class="chico">Sin vista</span>';$('#verDoc').disabled=true;if(!a||!a.original)$('#abrirOrig').disabled=true}
+    else mini.innerHTML=`<img src="${a.vista}" alt="Miniatura del documento">`;
+    const ver=()=>a&&a.vista&&abrirVisor(a.vista,d.adjunto.nombre,a.original,d.adjunto.paginas>1?`Página 1 de ${d.adjunto.paginas}`:'');
+    mini.onclick=ver; $('#verDoc').onclick=ver; $('#abrirOrig').onclick=()=>abrirOriginal(a&&a.original,d.adjunto.nombre);
+  }).catch(()=>{const mini=$('#adjMini');if(mini)mini.innerHTML='<span class="chico">No disponible</span>'});
 }
 function cerrar(){$('#detalle').classList.remove('on');$('#detalle').setAttribute('aria-hidden','true');$('#velo').classList.remove('on')}
-$('#velo').onclick=cerrar; addEventListener('keydown',e=>{if(e.key==='Escape')cerrar()});
+$('#velo').onclick=cerrar; addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#visorModal').classList.contains('on'))cerrarVisor();else cerrar()}});
 
 /* ===== restablecer ===== */
 $('#reset').onclick=()=>{
   const b=$('#reset');
   if(!b.dataset.conf){b.dataset.conf='1';b.textContent='Confirmar: borrar lo cargado';b.classList.add('peligro');setTimeout(()=>{if(b.dataset.conf){delete b.dataset.conf;b.textContent='Restablecer ejemplo';b.classList.remove('peligro')}},4000);return}
   delete b.dataset.conf;b.textContent='Restablecer ejemplo';b.classList.remove('peligro');
-  docs=JSON.parse(JSON.stringify(DOCS_EJEMPLO));recien=null;pintar();toast('Se restablecieron los documentos de ejemplo');
+  docs=JSON.parse(JSON.stringify(DOCS_EJEMPLO));recien=null;adjClear();pintar();toast('Se restablecieron los documentos de ejemplo');
 };
 
 /* ===== CSV ===== */
